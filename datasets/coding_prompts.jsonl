@@ -1,0 +1,2 @@
+{"id": "code-001", "idea": "Build a Redis rate limiter middleware in FastAPI with async Python", "modality": "code", "category": "python-engineering", "expected_keywords": ["FastAPI", "Pydantic", "asyncio", "pytest"]}
+{"id": "code-002", "idea": "Refactor a synchronous data ingestion pipeline to use asyncio and chunking", "modality": "code", "category": "debugging-refactoring", "expected_keywords": ["asyncio", "chunking", "type hints"]}
