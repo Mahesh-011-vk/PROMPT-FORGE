@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "promptforge-ai"
+version = "0.1.0"
+description = "Enterprise AI Prompt Engineering, Optimization, Evaluation and Deployment Platform"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "PromptForge AI Team" }
+]
+keywords = [
+    "prompt-engineering",
+    "generative-ai",
+    "llm",
+    "evaluation",
+    "rag",
+    "vector-search",
+    "agentic-ai",
+    "fastapi",
+    "nicegui"
+]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.8.0",
+    "pydantic-settings>=2.4.0",
+    "sqlalchemy>=2.0.30,<2.1.0",
+    "alembic>=1.13.0",
+    "httpx>=0.27.0",
+    "typer>=0.12.0",
+    "rich>=13.7.0",
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.9",
+    "nicegui>=2.0.0",
+    "plotly>=5.22.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.6.0",
+    "aiosqlite>=0.20.0",
+]
+full = [
+    "google-genai>=0.1.0",
+    "openai>=1.40.0",
+    "anthropic>=0.34.0",
+    "redis>=5.0.0",
+    "psycopg2-binary>=2.9.9",
+    "asyncpg>=0.29.0",
+    "pgvector>=0.3.2",
+    "fastembed>=0.3.0",
+]
+
+[project.scripts]
+promptforge = "app.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app", "promptforge"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
