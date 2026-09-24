@@ -9,10 +9,10 @@ from __future__ import annotations
 
 import asyncio
 import time
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.syntax import Syntax
 
 from app.agents.orchestrator import AgentOrchestrator
 from app.analytics.engine import AnalyticsEngine
@@ -79,7 +79,7 @@ async def run_walkthrough():
     # 3. 7-Dimensional Heuristic Quality Lab
     console.print("[bold yellow]► Stage 3: Multi-Dimensional Heuristic Evaluation Lab[/bold yellow]")
     eval_text = "You are a Principal Software Architect. Implement an asynchronous token bucket rate limiter in Python with typing and test cases."
-    score, metrics, feedback = heuristic_scorer.evaluate(prompt=eval_text, modality="code")
+    score, metrics, _ = heuristic_scorer.evaluate(prompt=eval_text, modality="code")
 
     table = Table(title="7-Dimensional Heuristic Scorecard", border_style="magenta")
     table.add_column("Dimension", style="cyan", no_wrap=True)
