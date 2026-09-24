@@ -86,13 +86,17 @@ class KnowledgeRetriever:
     async def search(
         self,
         query: str,
-        session: AsyncSession,
+        session: AsyncSession | None = None,
         top_k: int = 4,
         min_similarity: float = -1.0,
     ) -> list[dict]:
         """
         Executes semantic vector similarity search against knowledge chunks.
         """
+        if session is None:
+            from app.core.database import async_session_factory
+            async with async_session_factory() as sess:
+                return await self.search(query, session=sess, top_k=top_k, min_similarity=min_similarity)
         query_vector = await model_router.embed(query)
         chunks = (await session.execute(select(KnowledgeChunk))).scalars().all()
 
