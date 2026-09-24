@@ -3,6 +3,7 @@ PromptForge AI - Prompt Generation Studio Page.
 """
 
 import time
+
 from nicegui import ui
 
 from app.agents.orchestrator import AgentOrchestrator
@@ -84,7 +85,7 @@ async def studio_page():
                     copy_btn = ui.button("Copy Prompt", icon="content_copy").props("outline color=slate")
                     async def copy_prompt():
                         if output_text.value:
-                            ui.run_javascript(f"navigator.clipboard.writeText({repr(output_text.value)})")
+                            ui.run_javascript(f"navigator.clipboard.writeText({output_text.value!r})")
                             ui.notify("Prompt copied to clipboard!", type="positive")
                     copy_btn.on("click", copy_prompt)
 
@@ -113,7 +114,7 @@ async def studio_page():
             var = (
                 res.variants.get("model_specific")
                 or res.variants.get("expert")
-                or list(res.variants.values())[0]
+                or next(iter(res.variants.values()))
             )
             output_text.value = var.prompt_text
             neg_output.value = var.negative_prompt or "None"

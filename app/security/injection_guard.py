@@ -8,50 +8,51 @@ and system prompt extraction vectors.
 from __future__ import annotations
 
 import re
+from typing import ClassVar
 
 
 class InjectionGuard:
     """Multi-vector detector for adversarial prompt injection payloads."""
 
-    INJECTION_RULES: list[tuple[re.Pattern, str, float]] = [
+    INJECTION_RULES: ClassVar[list[tuple[re.Pattern, str, float]]] = [
         # (Pattern, Description, Weight)
         (
-            re.compile(r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?", re.I),
+            re.compile(r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?", re.IGNORECASE),
             "Direct override: instruction reset attempt",
             0.85,
         ),
         (
-            re.compile(r"disregard\s+(all\s+)?(previous|prior|preceding)\s+(rules|prompts|directives)", re.I),
+            re.compile(r"disregard\s+(all\s+)?(previous|prior|preceding)\s+(rules|prompts|directives)", re.IGNORECASE),
             "Direct override: rule disregard attempt",
             0.85,
         ),
         (
-            re.compile(r"you\s+are\s+now\s+(in\s+)?(DAN|unrestricted|god)\s+mode", re.I),
+            re.compile(r"you\s+are\s+now\s+(in\s+)?(DAN|unrestricted|god)\s+mode", re.IGNORECASE),
             "Jailbreak: persona hijack (DAN/unrestricted)",
             0.90,
         ),
         (
-            re.compile(r"(enable|activate)\s+(developer|unaligned|maintenance)\s+mode", re.I),
+            re.compile(r"(enable|activate)\s+(developer|unaligned|maintenance)\s+mode", re.IGNORECASE),
             "Jailbreak: developer mode simulation",
             0.75,
         ),
         (
-            re.compile(r"(reveal|print|display|dump|leak)\s+(your\s+)?(system\s+prompt|initial\s+instructions)", re.I),
+            re.compile(r"(reveal|print|display|dump|leak)\s+(your\s+)?(system\s+prompt|initial\s+instructions)", re.IGNORECASE),
             "Prompt leakage: system prompt extraction attempt",
             0.80,
         ),
         (
-            re.compile(r"(</system>|<system>|</instruction>|\[SYSTEM_PROMPT\]|```system)", re.I),
+            re.compile(r"(</system>|<system>|</instruction>|\[SYSTEM_PROMPT\]|```system)", re.IGNORECASE),
             "Delimiter hijacking: unauthorized system tag closure",
             0.95,
         ),
         (
-            re.compile(r"repeat\s+everything\s+(written\s+)?above", re.I),
+            re.compile(r"repeat\s+everything\s+(written\s+)?above", re.IGNORECASE),
             "Prompt leakage: verbatim memory dump attempt",
             0.70,
         ),
         (
-            re.compile(r"for\s+educational\s+purposes\s+only,?\s+how\s+to\s+(hack|attack|exploit|bypass)", re.I),
+            re.compile(r"for\s+educational\s+purposes\s+only,?\s+how\s+to\s+(hack|attack|exploit|bypass)", re.IGNORECASE),
             "Adversarial roleplay: educational hypothetical bypass",
             0.65,
         ),

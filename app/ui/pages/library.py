@@ -42,7 +42,7 @@ async def library_page():
             query = search_input.value.strip() if search_input.value else None
 
             async with async_session_factory() as session:
-                prompts, total = await LibraryService.list_prompts(
+                prompts, _ = await LibraryService.list_prompts(
                     db=session,
                     query=query,
                     modality=mod,

@@ -4,7 +4,6 @@ PromptForge AI - RAG Document Chunker.
 Recursively splits long documents and guides into semantic chunks with overlap.
 """
 
-from typing import List
 
 
 class TextChunker:
@@ -14,7 +13,7 @@ class TextChunker:
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
 
-    def split_text(self, text: str) -> List[str]:
+    def split_text(self, text: str) -> list[str]:
         """Splits input text into a list of overlapping text chunks."""
         cleaned = text.strip()
         if not cleaned:
@@ -23,7 +22,7 @@ class TextChunker:
         if len(cleaned) <= self.chunk_size:
             return [cleaned]
 
-        chunks: List[str] = []
+        chunks: list[str] = []
         # Attempt split on double newline (paragraphs) first
         paragraphs = cleaned.split("\n\n")
         current_chunk = ""

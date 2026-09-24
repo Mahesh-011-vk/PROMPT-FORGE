@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import re
 import time
+from typing import ClassVar
+
 from app.agents.state import AgentState
 
 
@@ -17,15 +19,15 @@ class SafetyAgent:
     NAME = "SafetyAgent"
 
     # Known prompt injection / jailbreak patterns
-    INJECTION_PATTERNS = [
-        re.compile(r"ignore\s+(all\s+)?(previous|prior)\s+instructions?", re.I),
-        re.compile(r"you\s+are\s+now\s+in\s+DAN\s+mode", re.I),
-        re.compile(r"system\s*override", re.I),
-        re.compile(r"bypass\s+all\s+safety\s+filters?", re.I),
+    INJECTION_PATTERNS: ClassVar[list[re.Pattern]] = [
+        re.compile(r"ignore\s+(all\s+)?(previous|prior)\s+instructions?", re.IGNORECASE),
+        re.compile(r"you\s+are\s+now\s+in\s+DAN\s+mode", re.IGNORECASE),
+        re.compile(r"system\s*override", re.IGNORECASE),
+        re.compile(r"bypass\s+all\s+safety\s+filters?", re.IGNORECASE),
     ]
 
-    KIDS_UNSAFE_PATTERNS = [
-        re.compile(r"\b(violent|blood|gore|weapon|kill|gun|murder|knife|drug)\b", re.I),
+    KIDS_UNSAFE_PATTERNS: ClassVar[list[re.Pattern]] = [
+        re.compile(r"\b(violent|blood|gore|weapon|kill|gun|murder|knife|drug)\b", re.IGNORECASE),
     ]
 
     @classmethod

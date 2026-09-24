@@ -8,6 +8,7 @@ distributions, time-series rollups, and cost projection models.
 from __future__ import annotations
 
 from typing import Any
+
 import numpy as np
 import pandas as pd
 
@@ -67,7 +68,7 @@ class AnalyticsEngine:
         if "model_used" not in df.columns:
             df["model_used"] = "general"
 
-        total_events = int(len(df))
+        total_events = len(df)
         total_tokens = int(df["tokens"].sum())
         total_cost = round(float(df["cost"].sum()), 6)
 

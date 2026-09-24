@@ -5,6 +5,7 @@ PromptForge AI - Authentication & RBAC FastAPI Dependencies.
 from __future__ import annotations
 
 from collections.abc import Callable
+
 from fastapi import Depends, Header
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

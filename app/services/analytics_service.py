@@ -7,8 +7,9 @@ and analytical aggregation reporting via AnalyticsEngine.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -57,7 +58,7 @@ class AnalyticsService:
         days: int = 30,
     ) -> AnalyticsSummaryResponse:
         """Fetch usage events within the given day window and calculate aggregate analytics."""
-        since = datetime.now(timezone.utc) - timedelta(days=days)
+        since = datetime.now(UTC) - timedelta(days=days)
         stmt = select(UsageEvent).where(UsageEvent.timestamp >= since)
         res = await db.execute(stmt)
         events = res.scalars().all()

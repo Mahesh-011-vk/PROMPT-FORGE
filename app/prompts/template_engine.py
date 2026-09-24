@@ -56,7 +56,7 @@ class TemplateEngine:
             if filter_pipe:
                 parts = [p.strip() for p in filter_pipe.split("|")]
                 for part in parts:
-                    if part.startswith("default:") or part.startswith("default="):
+                    if part.startswith(("default:", "default=")):
                         # Extract default value (stripping optional quotes)
                         val = part.split(":", 1)[-1] if ":" in part else part.split("=", 1)[-1]
                         val = val.strip().strip("'\"")
@@ -146,7 +146,7 @@ class TemplateEngine:
                 # Fallback to default in expression if available
                 if filter_pipe:
                     for part in [p.strip() for p in filter_pipe.split("|")]:
-                        if part.startswith("default:") or part.startswith("default="):
+                        if part.startswith(("default:", "default=")):
                             val = part.split(":", 1)[-1] if ":" in part else part.split("=", 1)[-1]
                             val = val.strip().strip("'\"")
                             break

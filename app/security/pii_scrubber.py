@@ -7,12 +7,13 @@ Detects and redacts sensitive data such as emails, phone numbers, SSNs, credit c
 from __future__ import annotations
 
 import re
+from typing import ClassVar
 
 
 class PIIScrubber:
     """Detects and redacts sensitive personally identifiable information."""
 
-    PATTERNS: dict[str, tuple[re.Pattern, str]] = {
+    PATTERNS: ClassVar[dict[str, tuple[re.Pattern, str]]] = {
         "EMAIL": (
             re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"),
             "[REDACTED_EMAIL]",

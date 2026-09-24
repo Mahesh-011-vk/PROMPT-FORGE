@@ -62,7 +62,7 @@ async def evaluator_page():
             # Render Metrics Breakdown
             metrics_container.clear()
             with metrics_container:
-                for key, m in metrics.items():
+                for m in metrics.values():
                     with ui.column().classes("w-full gap-1"):
                         with ui.row().classes("justify-between w-full text-xs font-mono"):
                             ui.label(m.name).classes("font-semibold text-slate-200")

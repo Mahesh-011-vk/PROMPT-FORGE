@@ -6,6 +6,7 @@ Provides vector similarity search and document ingestion across knowledge reposi
 
 import math
 import os
+
 import aiofiles
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

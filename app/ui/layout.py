@@ -3,6 +3,7 @@ PromptForge AI - Base Layout Component for NiceGUI.
 """
 
 from collections.abc import Callable
+
 from nicegui import ui
 
 from app.ui.styles import GLASS_CSS

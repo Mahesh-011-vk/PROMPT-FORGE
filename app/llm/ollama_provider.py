@@ -28,7 +28,7 @@ class OllamaProvider(AbstractLLMProvider):
             async with httpx.AsyncClient(timeout=2.0) as client:
                 res = await client.get(f"{self.base_url}/api/version")
                 return res.status_code == 200
-        except (httpx.RequestError, Exception):  # noqa: BLE001
+        except (httpx.RequestError, Exception):
             return False
 
     async def generate(

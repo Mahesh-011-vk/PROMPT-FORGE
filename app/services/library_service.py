@@ -11,13 +11,14 @@ import csv
 import io
 import json
 from typing import Any
+
 import yaml
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.exceptions import ResourceNotFoundException
-from app.models.prompt import Prompt, PromptTemplate, PromptVersion
+from app.models.prompt import Prompt, PromptVersion
 from app.models.user import User
 from app.schemas.library import (
     PromptCreateRequest,
@@ -401,7 +402,7 @@ class LibraryService:
                 prompt.current_version_id = version.id
                 created_ids.append(prompt.id)
             except Exception as e:
-                errors.append(f"Failed to import '{item.title}': {str(e)}")
+                errors.append(f"Failed to import '{item.title}': {e!s}")
 
         await db.commit()
         return len(created_ids), created_ids, errors

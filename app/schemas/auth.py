@@ -5,6 +5,7 @@ PromptForge AI - Authentication & RBAC Schemas.
 from __future__ import annotations
 
 from pydantic import BaseModel, Field
+
 from app.config.constants import UserRole
 
 

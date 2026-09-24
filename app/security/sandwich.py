@@ -8,6 +8,7 @@ behind cryptographic nonces and immutable structural delimiters.
 from __future__ import annotations
 
 import secrets
+
 from app.schemas.security import SandwichWrapResponse
 
 

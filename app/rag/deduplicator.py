@@ -7,6 +7,7 @@ and dense embedding cosine similarity.
 
 import hashlib
 import re
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -38,7 +39,6 @@ class PromptDeduplicator:
         """
         Scans saved prompts in database to detect exact or semantic duplicates.
         """
-        norm_candidate = self.normalize(candidate_text)
         cand_hash = self.compute_hash(candidate_text)
 
         # 1. Exact match check

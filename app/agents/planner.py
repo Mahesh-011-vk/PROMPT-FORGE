@@ -7,6 +7,7 @@ Deconstructs prompt engineering goals into actionable modular specifications.
 from __future__ import annotations
 
 import time
+
 from app.agents.state import AgentState
 
 
@@ -45,8 +46,8 @@ class PlannerAgent:
             "sub_goals": sub_goals,
             "target_modality": state.modality,
             "complexity_level": "advanced" if len(state.goal.split()) > 10 else "standard",
-            "requires_few_shot": True if state.modality in {"code", "text"} else False,
-            "negative_prompt_required": True if state.modality in {"image", "video"} else False,
+            "requires_few_shot": state.modality in {"code", "text"},
+            "negative_prompt_required": state.modality in {"image", "video"},
         }
 
         latency = int((time.perf_counter() - start) * 1000)

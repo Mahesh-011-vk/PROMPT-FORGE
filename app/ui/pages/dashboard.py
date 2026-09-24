@@ -3,6 +3,7 @@ PromptForge AI - UI Dashboard Page.
 """
 
 from nicegui import ui
+
 from app.ui.layout import page_layout
 
 

@@ -2,8 +2,8 @@
 PromptForge AI - Analytics & Telemetry Page with Plotly Visualizations.
 """
 
-from nicegui import ui
 import plotly.graph_objects as go
+from nicegui import ui
 
 from app.core.database import async_session_factory
 from app.services.analytics_service import AnalyticsService

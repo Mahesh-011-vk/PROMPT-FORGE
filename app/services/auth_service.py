@@ -5,10 +5,10 @@ PromptForge AI - Authentication & User Management Service.
 from __future__ import annotations
 
 from typing import Any
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config.constants import UserRole
 from app.config.settings import settings
 from app.core.exceptions import ValidationErrorException
 from app.core.security import (

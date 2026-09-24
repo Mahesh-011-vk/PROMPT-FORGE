@@ -6,8 +6,9 @@ Provides password hashing via direct bcrypt and JWT access token handling via py
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
+
 import bcrypt
 from jose import JWTError, jwt
 
@@ -62,7 +63,7 @@ def create_access_token(
 ) -> str:
     """Generate a signed JWT access token with expiration timestamp."""
     to_encode = data.copy()
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     if expires_delta:
         expire = now + expires_delta
     else:
@@ -78,4 +79,4 @@ def decode_access_token(token: str) -> dict[str, Any]:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError as e:
-        raise AuthenticationException(f"Token verification failed: {str(e)}") from e
+        raise AuthenticationException(f"Token verification failed: {e!s}") from e
