@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------------------------------------------
+  # PromptForge AI Application Server (FastAPI + NiceGUI + AI Agents)
+  # ----------------------------------------------------------------------------
+  promptforge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: promptforge:latest
+    container_name: promptforge_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DATABASE_URL=sqlite+aiosqlite:////app/data/promptforge.db
+      - REDIS_URL=redis://redis:6379/0
+      - USE_IN_MEMORY_CACHE=false
+      - ENABLE_RAG=true
+      - ENABLE_AGENTS=true
+      - ENABLE_ANALYTICS=true
+      - ENABLE_EVALUATION=true
+      - ENABLE_PROMPT_INJECTION_DEFENSE=true
+      - SECRET_KEY=enterprise-production-super-secret-key-32chars
+      # AI Provider API Keys (Inject via .env or container secret management)
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    volumes:
+      - promptforge_data:/app/data
+      - ./knowledge:/app/knowledge:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - promptforge_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # ----------------------------------------------------------------------------
+  # Redis - Distributed Token Cache & High-Speed Rate Limiting
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: promptforge_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - promptforge_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # PostgreSQL + pgvector (Enterprise Vector DB profile)
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: promptforge_postgres
+    restart: unless-stopped
+    profiles:
+      - enterprise
+    environment:
+      POSTGRES_DB: promptforge
+      POSTGRES_USER: promptforge
+      POSTGRES_PASSWORD: promptforge_secure_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - promptforge_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U promptforge -d promptforge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  promptforge_net:
+    driver: bridge
+
+volumes:
+  promptforge_data:
+  redis_data:
+  postgres_data:
