@@ -31,5 +31,17 @@ class ResponseEnvelope(BaseModel, Generic[T]):
 
     success: bool = Field(default=True, description="Whether the request succeeded")
     data: T | None = Field(default=None, description="Response payload")
+    message: str | None = Field(default=None, description="Optional informational message")
     error: ErrorDetail | None = Field(default=None, description="Error detail if request failed")
     meta: ResponseMeta = Field(default_factory=ResponseMeta, description="Contextual metadata")
+
+
+class PaginatedResponse(BaseModel, Generic[T]):
+    """Standardized paginated list response envelope."""
+
+    success: bool = Field(default=True)
+    items: list[T] = Field(default_factory=list)
+    total: int = Field(default=0)
+    page: int = Field(default=1)
+    page_size: int = Field(default=20)
+    meta: ResponseMeta = Field(default_factory=ResponseMeta)

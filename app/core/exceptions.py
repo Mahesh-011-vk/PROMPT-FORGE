@@ -48,6 +48,9 @@ class ValidationErrorException(PromptForgeException):
         )
 
 
+ValidationException = ValidationErrorException
+
+
 class RateLimitExceededException(PromptForgeException):
     """Raised when request frequency exceeds assigned quota."""
 
