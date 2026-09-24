@@ -178,3 +178,8 @@ async def root():
 
 # Mount API v1 Master Router
 app.include_router(api_v1_router, prefix=settings.API_V1_PREFIX)
+
+# Mount Interactive NiceGUI UI
+from app.ui.app import mount_ui  # noqa: E402
+
+mount_ui(app)

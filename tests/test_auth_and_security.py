@@ -117,13 +117,18 @@ async def test_api_security_endpoints():
 @pytest.mark.asyncio
 async def test_api_auth_and_rbac_flow():
     """Verify registration, login, token auth, and role-based access control."""
+    import uuid
+
+    user_email = f"analyst_{uuid.uuid4().hex[:8]}@promptforge.ai"
+    admin_email = f"chief_admin_{uuid.uuid4().hex[:8]}@promptforge.ai"
+
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         # 1. Register regular user
         reg_res = await client.post(
             "/api/v1/auth/register",
             json={
-                "email": "analyst@promptforge.ai",
+                "email": user_email,
                 "password": "Password123!",
                 "role": "USER",
             },
@@ -139,7 +144,7 @@ async def test_api_auth_and_rbac_flow():
             headers={"Authorization": f"Bearer {user_token}"},
         )
         assert me_res.status_code == 200
-        assert me_res.json()["data"]["email"] == "analyst@promptforge.ai"
+        assert me_res.json()["data"]["email"] == user_email
         assert me_res.json()["data"]["role"] == "USER"
 
         # 3. Regular user forbidden from admin endpoint
@@ -153,7 +158,7 @@ async def test_api_auth_and_rbac_flow():
         admin_reg = await client.post(
             "/api/v1/auth/register",
             json={
-                "email": "chief_admin@promptforge.ai",
+                "email": admin_email,
                 "password": "AdminPassword123!",
                 "role": "ADMIN",
             },
@@ -173,7 +178,7 @@ async def test_api_auth_and_rbac_flow():
         login_res = await client.post(
             "/api/v1/auth/login",
             json={
-                "email": "chief_admin@promptforge.ai",
+                "email": admin_email,
                 "password": "AdminPassword123!",
             },
         )
