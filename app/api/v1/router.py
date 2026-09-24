@@ -4,6 +4,7 @@ PromptForge AI - API v1 Master Router.
 
 from fastapi import APIRouter
 
+from app.api.v1.analytics import router as analytics_router
 from app.api.v1.categories import router as categories_router
 from app.api.v1.evaluate import router as evaluate_router
 from app.api.v1.health import router as health_router
@@ -25,6 +26,7 @@ api_v1_router.include_router(evaluate_router)
 api_v1_router.include_router(rag_router)
 api_v1_router.include_router(library_router)
 api_v1_router.include_router(versions_router)
+api_v1_router.include_router(analytics_router)
 api_v1_router.include_router(categories_router)
 api_v1_router.include_router(models_router)
 api_v1_router.include_router(templates_router)
