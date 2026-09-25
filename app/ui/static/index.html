@@ -1139,11 +1139,11 @@
           <span id="theme-btn-text">Dark 3D Mode</span>
         </button>
 
-        <!-- Swagger API Docs Link -->
-        <a href="/docs" target="_blank" class="btn-3d-secondary" title="View OpenAPI REST Schema">
+        <!-- In-Page Swagger API Docs Button -->
+        <button class="btn-3d-secondary" onclick="openDocsModal()" title="View In-Page OpenAPI REST Docs">
           <i class="fa-solid fa-code"></i>
           <span>API Docs</span>
-        </a>
+        </button>
       </div>
     </header>
 
@@ -1606,6 +1606,20 @@
           <i class="fa-solid fa-copy"></i> <span>Copy Code</span>
         </button>
       </div>
+    </div>
+  <!-- In-Page OpenAPI Docs Modal -->
+  <div id="docs-modal" class="modal-overlay" onclick="if(event.target === this) closeDocsModal()">
+    <div class="modal-clay-content" style="width: 95%; max-width: 1200px; height: 86vh; display: flex; flex-direction: column; padding: 20px 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid fa-code" style="color: #00cfcc; font-size: 1.2rem;"></i>
+          <h3 style="margin: 0; font-family: var(--font-display); font-size: 1.15rem;">OpenAPI Interactive Documentation</h3>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-3d-secondary" onclick="closeDocsModal()" style="font-size: 0.75rem; padding: 6px 14px;">✕ Close</button>
+        </div>
+      </div>
+      <iframe src="/docs" style="width: 100%; height: 100%; border: 1px solid var(--border-clay); border-radius: 14px; background: #ffffff;"></iframe>
     </div>
   </div>
 
@@ -2285,6 +2299,14 @@ print(response.choices[0].message.content)`;
 
     function closeCodeModal() {
       document.getElementById('code-modal').classList.remove('active');
+    }
+
+    function openDocsModal() {
+      document.getElementById('docs-modal').classList.add('active');
+    }
+
+    function closeDocsModal() {
+      document.getElementById('docs-modal').classList.remove('active');
     }
 
     // Initialize on page load
