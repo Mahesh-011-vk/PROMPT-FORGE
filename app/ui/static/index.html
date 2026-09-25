@@ -2294,6 +2294,17 @@ print(response.choices[0].message.content)`;
       renderAgentTimeline(defaultAgentSteps);
       renderTemplateFields();
       generateStudioPrompt();
+
+      // If opened via /studio or #studio, directly show functional workstation
+      if (window.location.pathname.includes('/studio') || window.location.hash.includes('studio')) {
+        const homeScreen = document.getElementById('screen-home');
+        const mainScreen = document.getElementById('screen-main');
+        if (homeScreen && mainScreen) {
+          homeScreen.style.display = 'none';
+          mainScreen.style.display = 'block';
+          mainScreen.classList.add('active');
+        }
+      }
     });
   </script>
 </body>
