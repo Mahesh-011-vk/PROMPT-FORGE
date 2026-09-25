@@ -2,6 +2,7 @@
 PromptForge AI - FastAPI Master Application.
 """
 
+import os
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -9,7 +10,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import __app_name__, __tagline__, __version__
@@ -38,7 +39,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=__app_name__,
     version=__version__,
-    description=f"Enterprise AI Prompt Engineering Platform. {__tagline__}",
+    description=(
+        f"Enterprise AI Prompt Engineering Platform. {__tagline__}\n\n"
+        "### 🌟 [👉 CLICK HERE TO OPEN THE PROMPTFORGE INTERACTIVE WEB APPLICATION](/) 🌟\n\n"
+        "*Full GUI with Prompt Studio, Optimizer, 7D Evaluation Lab, Multi-Agent Graph, Vector RAG & Analytics.*"
+    ),
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
@@ -162,22 +167,44 @@ async def root_health():
     )
 
 
+STATIC_INDEX_PATH = os.path.join(os.path.dirname(__file__), "ui", "static", "index.html")
+
+
+def get_index_html() -> str:
+    if os.path.exists(STATIC_INDEX_PATH):
+        with open(STATIC_INDEX_PATH, encoding="utf-8") as f:
+            return f.read()
+    return "<h1>PromptForge AI</h1><p>Application is loading...</p>"
+
+
 @app.get("/", tags=["Root"])
 async def root(request: Request):
-    """Platform root endpoint: redirects web browsers directly to the interactive UI, or returns JSON for API clients."""
+    """Platform root endpoint: serves the interactive UI to web browsers, or returns JSON for API clients."""
     accept = request.headers.get("accept", "")
     if "text/html" in accept and "application/json" not in accept:
-        return RedirectResponse(url="/ui/")
+        return HTMLResponse(content=get_index_html())
     return ResponseEnvelope(
         data={
             "app": __app_name__,
             "version": __version__,
             "tagline": __tagline__,
-            "ui": "/ui/",
+            "ui": "/",
             "docs": "/docs",
             "api_v1": settings.API_V1_PREFIX,
         }
     )
+
+
+@app.get("/app", tags=["Root"], response_class=HTMLResponse)
+async def app_frontend():
+    """Direct route for interactive web application."""
+    return HTMLResponse(content=get_index_html())
+
+
+@app.get("/studio", tags=["Root"], response_class=HTMLResponse)
+async def studio_frontend():
+    """Direct route for interactive web studio."""
+    return HTMLResponse(content=get_index_html())
 
 
 # Mount API v1 Master Router

@@ -15,8 +15,10 @@ Combines all 9 enterprise subsystems into a single-link interactive application:
 
 from __future__ import annotations
 
+import difflib
 import sys
 import time
+from datetime import UTC, datetime
 
 import plotly.graph_objects as go
 from nicegui import ui
@@ -53,7 +55,97 @@ def workspace_page(initial_tab: str = "studio"):
         "active_tab": initial_tab,
         "shared_prompt": "",
         "shared_modality": "image",
+        "commit_history": [
+            {
+                "version": 1,
+                "version_str": "v1.0.0",
+                "timestamp": "2026-09-25 12:00:00",
+                "message": "feat: initial prompt draft for cyberpunk cyber-doctor",
+                "prompt": "A cinematic portrait of a cyberpunk cyber-doctor in neo Tokyo rain at night.",
+                "modality": "image",
+                "score": 75.0,
+            },
+            {
+                "version": 2,
+                "version_str": "v1.1.0",
+                "timestamp": "2026-09-25 12:15:30",
+                "message": "opt: add 35mm anamorphic lens, volumetric lighting and 8k fidelity",
+                "prompt": "A cinematic masterpiece film still of a cyberpunk cyber-doctor in neo Tokyo rain. Shot on ARRI Alexa 65 with a 35mm anamorphic prime lens, shallow depth of field. Lighting: Dramatic volumetric lighting, subtle neon rim illumination. Color grade: Rich contrast, 8k resolution. --ar 16:9 --v 6.1 --stylize 250",
+                "modality": "image",
+                "score": 92.5,
+            },
+        ],
     }
+
+    def open_code_export_dialog(prompt_text: str):
+        """Open multi-provider Python SDK export dialog."""
+        with ui.dialog() as dialog, ui.card().classes("glass-panel p-6 w-[700px] max-w-full gap-4"):
+            with ui.row().classes("justify-between items-center w-full"):
+                ui.label("Export Production SDK Code").classes("text-lg font-bold text-white")
+                ui.button(icon="close", on_click=dialog.close).props("flat round dense")
+
+            code_tabs = ui.tabs().classes("w-full")
+            with code_tabs:
+                t_openai = ui.tab("OpenAI (GPT-4o)")
+                t_gemini = ui.tab("Gemini (genai)")
+                t_anthropic = ui.tab("Anthropic (Claude)")
+                t_langchain = ui.tab("LangChain")
+
+            with ui.tab_panels(code_tabs, value=t_openai).classes("w-full"):
+                with ui.tab_panel(t_openai):
+                    openai_code = (
+                        "from openai import OpenAI\n\n"
+                        "client = OpenAI()\n\n"
+                        "response = client.chat.completions.create(\n"
+                        '    model="gpt-4o",\n'
+                        "    messages=[\n"
+                        '        {"role": "system", "content": "You are an expert production AI system."},\n'
+                        f'        {{"role": "user", "content": {prompt_text!r}}}\n'
+                        "    ],\n"
+                        "    temperature=0.7,\n"
+                        ")\n"
+                        "print(response.choices[0].message.content)"
+                    )
+                    ui.code(openai_code, language="python").classes("w-full text-xs font-mono")
+
+                with ui.tab_panel(t_gemini):
+                    gemini_code = (
+                        "from google import genai\n\n"
+                        "client = genai.Client()\n"
+                        "response = client.models.generate_content(\n"
+                        '    model="gemini-2.0-flash",\n'
+                        f"    contents={prompt_text!r},\n"
+                        ")\n"
+                        "print(response.text)"
+                    )
+                    ui.code(gemini_code, language="python").classes("w-full text-xs font-mono")
+
+                with ui.tab_panel(t_anthropic):
+                    anthropic_code = (
+                        "import anthropic\n\n"
+                        "client = anthropic.Anthropic()\n"
+                        "message = client.messages.create(\n"
+                        '    model="claude-3-5-sonnet-20241022",\n'
+                        "    max_tokens=1024,\n"
+                        f'    messages=[{{"role": "user", "content": {prompt_text!r}}}]\n'
+                        ")\n"
+                        "print(message.content[0].text)"
+                    )
+                    ui.code(anthropic_code, language="python").classes("w-full text-xs font-mono")
+
+                with ui.tab_panel(t_langchain):
+                    lc_code = (
+                        "from langchain_core.prompts import PromptTemplate\n\n"
+                        "prompt_template = PromptTemplate.from_template(\n"
+                        f"    template={prompt_text!r}\n"
+                        ")"
+                    )
+                    ui.code(lc_code, language="python").classes("w-full text-xs font-mono")
+
+            with ui.row().classes("justify-end w-full mt-2"):
+                ui.button("Close", on_click=dialog.close).classes("glow-btn px-6")
+        dialog.open()
+
 
     # ==========================================
     # Global Header & System Status Bar
@@ -96,6 +188,7 @@ def workspace_page(initial_tab: str = "studio"):
                 ui.tab("library", label="Template Library", icon="menu_book")
                 ui.tab("analytics", label="Analytics & Costs", icon="analytics")
                 ui.tab("security", label="Security & Guardrails", icon="security")
+                ui.tab("versions", label="Version Control & Diffs", icon="history")
                 ui.tab("admin", label="System & Models", icon="settings")
 
         # Tab Panels Container
@@ -189,6 +282,11 @@ def workspace_page(initial_tab: str = "studio"):
                                             ui.notify("Copied prompt to clipboard!", type="positive")
                                     ui.button("Copy", icon="content_copy", on_click=copy_studio_output).props("outline size=sm color=slate")
 
+                                    def on_export_code_click():
+                                        p = studio_output.value or studio_input.value
+                                        open_code_export_dialog(p)
+                                    ui.button("Export Code", icon="code", on_click=on_export_code_click).props("outline size=sm color=indigo")
+
                                 with ui.row().classes("gap-2"):
                                     def send_to_optimizer():
                                         if studio_output.value:
@@ -207,6 +305,26 @@ def workspace_page(initial_tab: str = "studio"):
                                             tabs.value = "evaluator"
                                             ui.notify("Transferred prompt to Evaluator!", type="info")
                                     ui.button("Send to Evaluator ➔", on_click=send_to_evaluator).props("size=sm color=emerald outline")
+
+                                    def commit_from_studio():
+                                        p = studio_output.value or studio_input.value
+                                        if not p:
+                                            ui.notify("Generate a prompt before committing.", type="warning")
+                                            return
+                                        v_num = len(state["commit_history"]) + 1
+                                        new_entry = {
+                                            "version": v_num,
+                                            "version_str": f"v1.{v_num}.0",
+                                            "timestamp": datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S"),
+                                            "message": f"Studio snapshot: {studio_input.value[:45]}...",
+                                            "prompt": p,
+                                            "modality": studio_modality.value,
+                                            "score": 90.0,
+                                        }
+                                        state["commit_history"].append(new_entry)
+                                        tabs.value = "versions"
+                                        ui.notify(f"Committed {new_entry['version_str']} to Version History!", type="positive")
+                                    ui.button("Commit Snapshot ➔", on_click=commit_from_studio).props("size=sm color=purple outline")
 
                     # Studio Handlers
                     async def handle_studio_compile():
@@ -854,3 +972,132 @@ def workspace_page(initial_tab: str = "studio"):
                                         ui.label(f"In: ${m.input_cost_per_million:.2f}").classes("text-xs font-mono text-emerald-400")
                                         ui.label(f"Out: ${m.output_cost_per_million:.2f}").classes("text-xs font-mono text-indigo-400")
                                         ui.badge("ACTIVE", color="emerald").classes("text-xs")
+
+            # -------------------------------------------------------------
+            # TAB 10: VERSION CONTROL & VISUAL DIFFS
+            # -------------------------------------------------------------
+            with ui.tab_panel("versions"):
+                with ui.column().classes("w-full gap-5"):
+                    with ui.column().classes("gap-0.5"):
+                        ui.label("Git-Like Version Control & Semantic Visual Diffs").classes("text-2xl font-bold text-white")
+                        ui.label("Track immutable prompt commits, compare side-by-side visual diffs, and perform instant zero-data-loss rollbacks.").classes("text-xs text-slate-400")
+
+                    # Commit Snapshot Box
+                    with ui.card().classes("glass-panel w-full p-6 gap-4"):
+                        ui.label("Commit Current Prompt Snapshot").classes("text-sm font-bold text-indigo-300 uppercase tracking-wider")
+                        with ui.row().classes("w-full gap-4 items-center"):
+                            ver_msg_input = ui.input(
+                                label="Commit Message",
+                                placeholder="e.g. feat: add volumetric lighting and 35mm anamorphic parameters...",
+                                value="feat: improve optical parameters and 8k fidelity tags",
+                            ).classes("flex-1 font-mono").props("outlined")
+
+                            ver_commit_btn = ui.button("Commit Snapshot", icon="save").classes("glow-btn px-6 py-2.5")
+
+                    # Commit History List
+                    with ui.card().classes("glass-panel w-full p-6 gap-3"):
+                        ui.label("Commit Snapshot History").classes("text-sm font-bold text-slate-300 uppercase tracking-wider")
+                        ver_history_container = ui.column().classes("w-full gap-2")
+
+                    # Visual Line-by-Line Diff Comparator
+                    with ui.card().classes("glass-panel w-full p-6 gap-4"):
+                        ui.label("Visual Line-by-Line Diff Comparator").classes("text-sm font-bold text-emerald-300 uppercase tracking-wider")
+                        with ui.row().classes("w-full justify-between items-center gap-4 flex-wrap"):
+                            with ui.row().classes("gap-4 items-center"):
+                                ver_sel_from = ui.select(label="Version A (Base)", options={}, value=1).classes("w-48").props("outlined")
+                                ver_sel_to = ui.select(label="Version B (Target)", options={}, value=2).classes("w-48").props("outlined")
+                                ver_diff_btn = ui.button("Compute Visual Diff", icon="difference").props("color=emerald outline").classes("px-6 py-2.5")
+
+                            ver_sim_badge = ui.badge("Similarity: --", color="emerald").classes("text-sm font-mono px-3 py-1 font-bold")
+
+                        ver_diff_output = ui.column().classes("w-full gap-1 p-4 glass-card font-mono text-xs overflow-x-auto rounded-lg")
+                        ui.label("Click 'Compute Visual Diff' to inspect additions and deletions.").classes("text-xs text-slate-500")
+
+                    def refresh_version_history():
+                        ver_history_container.clear()
+                        opts = {c["version"]: f"{c['version_str']} - {c['message'][:35]}" for c in state["commit_history"]}
+                        ver_sel_from.options = opts
+                        ver_sel_to.options = opts
+
+                        with ver_history_container:
+                            for c in reversed(state["commit_history"]):
+                                with ui.row().classes("glass-card p-3 justify-between items-center w-full"):
+                                    with ui.row().classes("items-center gap-3"):
+                                        ui.badge(c["version_str"], color="indigo").classes("text-xs font-mono font-bold")
+                                        with ui.column().classes("gap-0"):
+                                            ui.label(c["message"]).classes("text-sm font-bold text-white")
+                                            ui.label(f"{c['timestamp']} | Modality: {c['modality'].upper()}").classes("text-xs text-slate-400 font-mono")
+                                    with ui.row().classes("items-center gap-3"):
+                                        ui.badge(f"Score: {c['score']:.1f}", color="emerald").classes("text-xs font-mono")
+                                        def make_restorer(prompt_text, v_str):
+                                            def _restore():
+                                                studio_output.value = prompt_text
+                                                tabs.value = "studio"
+                                                ui.notify(f"Restored prompt from {v_str} into Studio!", type="positive")
+                                            return _restore
+                                        ui.button("Restore to Studio ➔", on_click=make_restorer(c["prompt"], c["version_str"])).props("outline size=xs color=amber")
+
+                    async def handle_commit_snapshot():
+                        if not ver_msg_input.value or not ver_msg_input.value.strip():
+                            ui.notify("Please enter a commit message.", type="warning")
+                            return
+
+                        p_text = studio_output.value or studio_input.value
+                        if not p_text:
+                            ui.notify("No prompt content to commit.", type="warning")
+                            return
+
+                        v_num = len(state["commit_history"]) + 1
+                        new_c = {
+                            "version": v_num,
+                            "version_str": f"v1.{v_num}.0",
+                            "timestamp": datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S"),
+                            "message": ver_msg_input.value.strip(),
+                            "prompt": p_text,
+                            "modality": studio_modality.value,
+                            "score": 92.0,
+                        }
+                        state["commit_history"].append(new_c)
+                        refresh_version_history()
+                        ver_sel_to.value = v_num
+                        ui.notify(f"Committed {new_c['version_str']} snapshot successfully!", type="positive")
+
+                    async def handle_compute_diff():
+                        c_from = next((c for c in state["commit_history"] if c["version"] == ver_sel_from.value), None)
+                        c_to = next((c for c in state["commit_history"] if c["version"] == ver_sel_to.value), None)
+
+                        if not c_from or not c_to:
+                            ui.notify("Please select valid versions to compare.", type="warning")
+                            return
+
+                        lines_a = c_from["prompt"].splitlines()
+                        lines_b = c_to["prompt"].splitlines()
+
+                        matcher = difflib.SequenceMatcher(None, c_from["prompt"], c_to["prompt"])
+                        sim_pct = matcher.ratio() * 100
+                        ver_sim_badge.text = f"Similarity: {sim_pct:.1f}%"
+
+                        diff_lines = list(difflib.ndiff(lines_a, lines_b))
+
+                        ver_diff_output.clear()
+                        with ver_diff_output:
+                            for line in diff_lines:
+                                if line.startswith("+ "):
+                                    with ui.row().classes("items-center gap-2 bg-emerald-950/40 text-emerald-300 p-1 rounded w-full"):
+                                        ui.icon("add", size="0.9rem", color="emerald-400")
+                                        ui.label(line[2:]).classes("font-mono")
+                                elif line.startswith("- "):
+                                    with ui.row().classes("items-center gap-2 bg-rose-950/40 text-rose-300 p-1 rounded w-full"):
+                                        ui.icon("remove", size="0.9rem", color="rose-400")
+                                        ui.label(line[2:]).classes("font-mono")
+                                elif line.startswith("? "):
+                                    continue
+                                else:
+                                    with ui.row().classes("items-center gap-2 text-slate-400 p-1 w-full"):
+                                        ui.label("  " + line[2:]).classes("font-mono")
+
+                        ui.notify("Visual diff computed!", type="positive")
+
+                    ver_commit_btn.on("click", handle_commit_snapshot)
+                    ver_diff_btn.on("click", handle_compute_diff)
+                    refresh_version_history()
