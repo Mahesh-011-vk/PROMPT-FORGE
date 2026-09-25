@@ -186,3 +186,7 @@ class TemplateEngine:
             success=len(missing_vars) == 0 or not strict,
             error_message=None if not missing_vars else f"Rendered with missing variables: {missing_vars}",
         )
+
+
+template_engine = TemplateEngine()
+

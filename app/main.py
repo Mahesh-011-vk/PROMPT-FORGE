@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import __app_name__, __tagline__, __version__
@@ -163,13 +163,17 @@ async def root_health():
 
 
 @app.get("/", tags=["Root"])
-async def root():
-    """Platform root information and documentation navigation."""
+async def root(request: Request):
+    """Platform root endpoint: redirects web browsers directly to the interactive UI, or returns JSON for API clients."""
+    accept = request.headers.get("accept", "")
+    if "text/html" in accept and "application/json" not in accept:
+        return RedirectResponse(url="/ui/")
     return ResponseEnvelope(
         data={
             "app": __app_name__,
             "version": __version__,
             "tagline": __tagline__,
+            "ui": "/ui/",
             "docs": "/docs",
             "api_v1": settings.API_V1_PREFIX,
         }
