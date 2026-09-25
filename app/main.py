@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import __app_name__, __tagline__, __version__
@@ -206,6 +207,11 @@ async def studio_frontend():
     """Direct route for interactive web studio."""
     return HTMLResponse(content=get_index_html())
 
+
+# Mount Static Assets Directory
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "ui", "static")
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Mount API v1 Master Router
 app.include_router(api_v1_router, prefix=settings.API_V1_PREFIX)
