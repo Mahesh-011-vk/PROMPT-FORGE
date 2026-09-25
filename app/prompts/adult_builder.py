@@ -49,22 +49,38 @@ class AdultPromptBuilder:
             recommended_settings={"temperature": 0.2, "max_tokens": 1800},
         )
 
-        # 3. Expert (Deep Technical Architecture & Governance)
+        # 3. Expert (Comprehensive Enterprise Strategy Masterclass)
         expert_text = (
-            f"Act as a Principal Systems Architect and Enterprise Fellow. Conduct a production-grade specification for: {subject}.\n\n"
-            f"Deliverable Specifications:\n"
-            f"- Architecture & Data Flow: System boundary definitions, state lifecycles, and sequence diagrams.\n"
-            f"- Performance & SLA Targets: p95/p99 latency ceilings, concurrency bottlenecks, and resource sizing.\n"
-            f"- Security & Zero-Trust Posture: RBAC, secrets management, input sanitization, and compliance (SOC2/GDPR).\n"
-            f"- Observability & Telemetry: Distributed tracing, core metric dashboards, and alert thresholds.\n"
-            f"- Production Code / Config Artifacts: Complete, production-ready implementation snippets with strict typing.\n\n"
-            f"Strict Rule: Do not produce placeholder code ('# TODO'). All code must be complete, tested, and executable."
+            f"[ROLE & STRATEGIC MANDATE]\n"
+            f"You are a Senior Strategic Advisor, Principal Systems Architect, and Enterprise Transformation Fellow. "
+            f"Deliver an exhaustive, publication-grade executive master briefing on: \"{subject}\".\n\n"
+            f"[EXECUTIVE SUMMARY & CORE THESIS]\n"
+            f"- Articulate the central bottom-line strategic thesis in 3 high-impact executive bullets.\n"
+            f"- Quantify direct business implications: revenue impact, EBITDA leverage, operational velocity, and governance risk.\n\n"
+            f"[SYSTEMIC ROOT-CAUSE DECONSTRUCTION]\n"
+            f"- Execute a first-principles breakdown of existing operational bottlenecks and architectural debt.\n"
+            f"- Map the critical path dependency network across technology infrastructure, human capital, and regulatory compliance.\n\n"
+            f"[WEIGHTED EVALUATION MATRIX & TRADE-OFF ANALYSIS]\n"
+            f"- Contrast top 3 strategic alternatives across 5 weighted criteria: "
+            f"(1) Total Cost of Ownership (TCO), (2) Time-to-Value Velocity, (3) Operational Complexity, "
+            f"(4) Security & Regulatory Posture, (5) 5-Year Scalability Horizon.\n\n"
+            f"[PERFORMANCE & SLA TARGETS]\n"
+            f"- Enforce rigorous Performance & SLA thresholds: sub-50ms latency ceilings, 99.999% availability, and automated failover.\n\n"
+            f"[30-60-90 DAY TACTICAL ROADMAP]\n"
+            f"- Phase 1 (Days 1-30): Immediate stabilization, quick wins, and baseline telemetry instrumentation.\n"
+            f"- Phase 2 (Days 31-60): Core process transformation, migration execution, and workflow optimization.\n"
+            f"- Phase 3 (Days 61-90): Automated governance scaling, enterprise hardening, and SLA handoff.\n\n"
+            f"[PRE-MORTEM RISK MITIGATION & ZERO-TRUST POSTURE]\n"
+            f"- Enforce a Zero-Trust Posture across identity perimeters, micro-segmentation, and cryptographic credential vaults.\n"
+            f"- Identify top 3 critical failure modes with early warning trigger metrics and deterministic recovery protocols.\n\n"
+            f"[OUTPUT CONSTRAINTS]: Strictly eliminate corporate platitudes and generic filler. All recommendations must be concrete, mathematically supported, and immediately actionable."
         )
         expert_variant = PromptVariant(
             variant_type="expert",
-            title="Principal Architecture Specification",
+            title="Principal Enterprise Master Briefing",
             prompt_text=expert_text,
-            recommended_settings={"temperature": 0.1, "max_tokens": 2500},
+            negative_prompt="generic filler, corporate buzzwords, unsubstantiated claims, vague recommendations, passive voice, unmeasured KPIs",
+            recommended_settings={"temperature": 0.1, "max_tokens": 3000},
         )
 
         # 4. Model-Specific (XML-tagged Claude/GPT Reasoning format)

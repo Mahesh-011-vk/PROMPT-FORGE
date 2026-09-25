@@ -15,35 +15,35 @@ class ImagePromptBuilder:
     def build_spec(self, intent: PromptIntent, auto_filled: dict[str, str]) -> ImagePromptSpec:
         """Converts intent and slot filling into a structured ImagePromptSpec."""
         subject = intent.subject
-        environment = intent.environment or auto_filled.get("environment", "in a detailed, atmospheric environment")
-        camera = auto_filled.get("camera", "shot on ARRI Alexa 65, 35mm anamorphic lens")
-        lighting = auto_filled.get("lighting", "cinematic volumetric lighting with subtle rim light")
-        style = intent.style or "cinematic film still, photorealistic"
+        environment = intent.environment or auto_filled.get("environment", "in a detailed, atmospheric neo-realist environment")
+        camera = auto_filled.get("camera", "shot on ARRI Alexa 65 large-format cinema camera")
+        lighting = auto_filled.get("lighting", "volumetric ray-traced lighting with dual-tone neon rim light")
+        style = intent.style or "cinematic film still, photorealistic masterpiece"
 
         return ImagePromptSpec(
             subject=subject,
             environment=environment,
-            composition="wide-angle cinematic framing, rule of thirds, deep focal depth",
+            composition="wide-angle cinematic framing, rule of thirds, Dutch angle depth, balanced golden ratio",
             camera=camera,
-            lens="35mm anamorphic lens, shallow depth of field, f/2.0 aperture",
+            lens="35mm anamorphic prime lens, f/1.8 aperture, creamy bokeh, shallow depth of field",
             lighting=lighting,
-            color_palette="rich cinematic color grading, balanced contrasts, deep shadows",
+            color_palette="Kodak Vision3 500T 35mm film grade, teal and amber split-toning, deep rich shadows",
             style=style,
-            materials="natural surface textures, realistic reflections, tangible micro-details",
-            textures="crisp detailed textures, authentic skin/material grain, 8k resolution",
-            mood="evocative, awe-inspiring, immersive atmosphere",
-            time_of_day="dramatic twilight with ambient fill",
-            weather="atmospheric mist, clear air clarity",
-            depth_of_field="f/2.0 shallow focus, smooth cinematic bokeh in background",
-            quality="masterpiece, photorealistic 8k, Unreal Engine 5 render fidelity",
-            negative_prompt="blurry, distorted, deformed, extra limbs, bad anatomy, text, watermark, signature, cartoon, oversaturated, low quality, artifacts",
+            materials="weathered carbon fiber, tactile brushed titanium, damp asphalt, micro-scratches",
+            textures="subsurface scattering, authentic skin pores, moisture droplets on reflective surfaces, 8k textures",
+            mood="evocative, awe-inspiring, moody cyberpunk atmosphere",
+            time_of_day="dramatic twilight with ambient fill and specular rain reflections",
+            weather="atmospheric mist, particulate suspension, clear optical clarity",
+            depth_of_field="f/1.8 shallow focus, smooth cinematic optical falloff",
+            quality="8k resolution, photorealistic, masterpiece, Octane Render, Unreal Engine 5.4 Lumen global illumination",
+            negative_prompt="blurry, low quality, distortion, noise, oversaturated, deformed hands, extra fingers, warped limbs, bad anatomy, text, watermark, signature, plastic skin, CGI cartoonish, overexposed, artifacting, chromatic aberration, duplicated facial features",
         )
 
     def generate_variants(self, spec: ImagePromptSpec, target_model: str = "default") -> dict[str, PromptVariant]:
         """Generates Basic, Advanced, Expert, Model-Specific, and Structured JSON variants."""
 
-        # 1. Basic (Concise)
-        basic_text = f"A {spec.style} of {spec.subject} {spec.environment}, {spec.lighting}."
+        # 1. Basic (Concise Visual Prompt)
+        basic_text = f"A {spec.style} of {spec.subject}, situated {spec.environment}, {spec.lighting}."
         basic_variant = PromptVariant(
             variant_type="basic",
             title="Concise Visual Prompt",
@@ -52,12 +52,14 @@ class ImagePromptBuilder:
             recommended_settings={"aspect_ratio": "16:9", "steps": 30},
         )
 
-        # 2. Advanced (Detailed)
+        # 2. Advanced (Production-Ready Photographic Prompt)
         adv_text = (
-            f"A high-fidelity {spec.style} capturing {spec.subject}, {spec.environment}. "
-            f"{spec.composition}. {spec.camera}, {spec.lens}. "
-            f"Lighting: {spec.lighting}. Color palette: {spec.color_palette}. "
-            f"Atmosphere: {spec.mood}, {spec.time_of_day}."
+            f"A high-end cinematic photograph of {spec.subject}, {spec.environment}. "
+            f"Composition: {spec.composition}, {spec.depth_of_field}. "
+            f"Optics: {spec.camera}, {spec.lens}. "
+            f"Lighting: {spec.lighting}, chiaroscuro contrast. "
+            f"Textures & Materials: {spec.materials}, {spec.textures}. "
+            f"Color science: {spec.color_palette}. Atmosphere: {spec.mood}, {spec.time_of_day}."
         )
         adv_variant = PromptVariant(
             variant_type="advanced",
@@ -68,42 +70,58 @@ class ImagePromptBuilder:
             recommended_settings={"aspect_ratio": "16:9", "cfg_scale": 7.0, "steps": 40},
         )
 
-        # 3. Expert (Hyper-Specified with materials and rendering tags)
+        # 3. Expert (Comprehensive Master Prompt with Layered Structural Directives)
         expert_text = (
-            f"Cinematic masterpiece film still of {spec.subject}, situated {spec.environment}. "
-            f"Composition: {spec.composition}, {spec.depth_of_field}. "
-            f"Captured on {spec.camera}, equipped with {spec.lens}. "
-            f"Lighting design: {spec.lighting}, volumetric god rays, subtle lens flare. "
-            f"Surface details: {spec.materials}, {spec.textures}. "
-            f"Color grading: {spec.color_palette}. Ambient conditions: {spec.time_of_day}, {spec.weather}. "
-            f"Overall fidelity: {spec.quality}."
+            f"[SCENE & SUBJECT]\n"
+            f"An evocative cinematic film still capturing {spec.subject}, situated {spec.environment}. "
+            f"Grounded physical presence, authentic styling, micro-expressions conveying deep focus and immersion.\n\n"
+            f"[CINEMATOGRAPHY & OPTICS]\n"
+            f"Composition: {spec.composition}, {spec.depth_of_field}.\n"
+            f"Optics: {spec.camera} with {spec.lens}. Shutter speed 1/125s, ISO 200, f/1.8 aperture for creamy background separation and natural optical distortion.\n\n"
+            f"[LIGHTING DESIGN & ATMOSPHERE]\n"
+            f"Lighting: {spec.lighting}. Dramatic chiaroscuro key lighting, atmospheric volumetric fog catching neon specular highlights, soft ambient bounce fill.\n\n"
+            f"[SURFACES, MATERIALS & TEXTURES]\n"
+            f"Materials: {spec.materials}. Tactile micro-details, realistic subsurface scattering, {spec.textures}, authentic moisture condensation.\n\n"
+            f"[COLOR SCIENCE & POST-PROCESSING]\n"
+            f"Color Grading: {spec.color_palette}. Preserved highlight roll-off, rich dynamic range, Aces color space, subtle film grain.\n\n"
+            f"[RENDER FIDELITY ENGINE]\n"
+            f"{spec.quality}, ray-traced reflections, extreme optical clarity."
         )
         expert_variant = PromptVariant(
             variant_type="expert",
-            title="Expert Masterclass Prompt",
+            title="Photographic Masterclass Directive",
             prompt_text=expert_text,
             negative_prompt=spec.negative_prompt,
             variables={"subject": spec.subject, "environment": spec.environment},
             recommended_settings={"aspect_ratio": "16:9", "cfg_scale": 7.5, "steps": 50, "sampler": "DPM++ 2M Karras"},
         )
 
-        # 4. Model-Specific formatting
+        # 4. Model-Specific formatting (Midjourney v6.1 / FLUX.1 / SDXL)
         model_lower = target_model.lower()
         if "midjourney" in model_lower or model_lower == "default":
-            model_text = f"{adv_text} --ar 16:9 --v 6.1 --stylize 250 --quality 2"
+            model_text = (
+                f"A high-end cinematic photo of {spec.subject}, {spec.environment}, "
+                f"composition: {spec.composition}, {spec.depth_of_field}, "
+                f"lighting: {spec.lighting}, chiaroscuro contrast, atmospheric volumetric fog, "
+                f"shot on {spec.camera} with {spec.lens}, "
+                f"tactile surfaces: {spec.materials}, {spec.textures}, "
+                f"color science: {spec.color_palette}, "
+                f"photorealistic cinematic render, 8k resolution, octane render, Unreal Engine 5.4 Lumen --ar 16:9 --v 6.1 --stylize 250 --quality 2"
+            )
             model_title = "Midjourney v6.1 Formatted"
         elif "flux" in model_lower:
             model_text = (
                 f"A natural color cinematic photograph of {spec.subject}. {spec.environment}. "
-                f"Natural optical characteristics of {spec.camera}. {spec.lighting}. "
-                f"Naturalistic skin and surface textures without digital sharpening. 35mm film aesthetic."
+                f"Natural optical characteristics of {spec.camera} with {spec.lens}. {spec.lighting}. "
+                f"Tactile {spec.materials}, natural skin and surface micro-textures without artificial digital sharpening. "
+                f"35mm film aesthetic, authentic optical depth of field."
             )
             model_title = "FLUX.1 Natural Language Prompt"
         else:
-            # Stable Diffusion XL format
             model_text = (
-                f"{spec.subject}, ({spec.environment}:1.1), ({spec.lighting}:1.2), "
-                f"shot on {spec.camera}, {spec.style}, 8k UHD, highly detailed"
+                f"masterpiece, photorealistic 8k photo of {spec.subject}, ({spec.environment}:1.1), "
+                f"({spec.lighting}:1.2), shot on {spec.camera} with {spec.lens}, "
+                f"{spec.materials}, {spec.style}, 8k UHD, highly detailed, octane render"
             )
             model_title = "Stable Diffusion XL Formatted"
 

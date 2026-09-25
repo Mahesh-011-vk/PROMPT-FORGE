@@ -87,17 +87,17 @@ class IntentExtractor:
 
     def _extract_subject(self, text: str, modality: Modality) -> str:
         """Extracts the primary focal subject from user text."""
-        # Strip common prefixes: "Create a...", "Make a...", "Generate a prompt for..."
+        # Strip common prefixes: "Create a...", "Make a...", "Generate a prompt for...", "Design..."
         cleaned = re.sub(
-            r"^(create|make|generate|build|write|draw|show)\s+(an?|the)?\s*",
+            r"^(create|make|generate|build|write|draw|show|design|give\s+me)\s+(an?|the)?\s*",
             "",
             text,
             flags=re.IGNORECASE,
         ).strip()
 
-        # Remove modality words like "cinematic image of", "video of"
+        # Remove modality words like "cinematic image of", "high-end cinematic photo of", "video showing"
         cleaned = re.sub(
-            r"^(cinematic\s+)?(image|photo|video|clip|story|code|script)\s+(of|about|showing|for)\s+",
+            r"^(an?|the)?\s*(high-end|ultra-detailed|detailed|photorealistic|hyperrealistic|stunning|epic|breathtaking|award-winning)?\s*(cinematic\s+)?(image|photo|photograph|picture|render|video|clip|sequence|footage|story|code|script|implementation)\s+(of|about|showing|depicting|illustrating|for)\s+",
             "",
             cleaned,
             flags=re.IGNORECASE,

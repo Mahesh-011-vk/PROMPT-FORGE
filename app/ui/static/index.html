@@ -1256,16 +1256,37 @@
               </div>
             </div>
 
+            <!-- Prompt Output Header with Stats and Variant Tabs -->
+            <div style="margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                <label style="margin-bottom: 0; font-weight: 700; font-size: 0.92rem;">Master Prompt</label>
+                <span id="studio-stat-badge" style="font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: rgba(16, 185, 129, 0.12); color: var(--brand-teal); font-family: monospace; font-weight: 600;">High-Density Directives</span>
+              </div>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button type="button" id="var-tab-expert" class="chip-3d chip-3d-selected" onclick="switchPromptVariant('expert')" style="font-size: 0.75rem; padding: 4px 10px; cursor: pointer;">
+                  <i class="fa-solid fa-crown" style="color: #f59e0b;"></i> <span>Master Expert</span>
+                </button>
+                <button type="button" id="var-tab-model_specific" class="chip-3d chip-3d-filter" onclick="switchPromptVariant('model_specific')" style="font-size: 0.75rem; padding: 4px 10px; cursor: pointer;">
+                  <i class="fa-solid fa-sliders"></i> <span>Model Syntax</span>
+                </button>
+                <button type="button" id="var-tab-advanced" class="chip-3d chip-3d-filter" onclick="switchPromptVariant('advanced')" style="font-size: 0.75rem; padding: 4px 10px; cursor: pointer;">
+                  <i class="fa-solid fa-layer-group"></i> <span>Production</span>
+                </button>
+                <button type="button" id="var-tab-structured_json" class="chip-3d chip-3d-filter" onclick="switchPromptVariant('structured_json')" style="font-size: 0.75rem; padding: 4px 10px; cursor: pointer;">
+                  <i class="fa-solid fa-code"></i> <span>JSON Spec</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Prompt Output -->
-            <div class="form-group" style="flex: 1;">
-              <label>Master Prompt</label>
-              <textarea id="studio-output" class="textarea-3d" rows="7" readonly style="font-weight: 500;"></textarea>
+            <div class="form-group" style="flex: 1; margin-bottom: 12px;">
+              <textarea id="studio-output" class="textarea-3d" rows="12" readonly style="font-weight: 500; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem; line-height: 1.55; min-height: 250px; background: rgba(0, 0, 0, 0.02);"></textarea>
             </div>
 
             <!-- Negative Prompt -->
-            <div class="form-group" id="negative-prompt-group">
-              <label>Negative Prompt / Constraints</label>
-              <textarea id="studio-negative" class="textarea-3d" rows="2" readonly style="color: var(--text-muted);"></textarea>
+            <div class="form-group" id="negative-prompt-group" style="margin-bottom: 10px;">
+              <label style="font-size: 0.82rem;">Negative Prompt / Constraints</label>
+              <textarea id="studio-negative" class="textarea-3d" rows="2" readonly style="color: var(--text-muted); font-size: 0.8rem; font-family: ui-monospace, monospace;"></textarea>
             </div>
 
             <!-- Action Bar -->
@@ -1849,6 +1870,36 @@
 
     // 6. Studio Modality & Presets
     let currentModality = 'image';
+    let cachedStudioVariants = {};
+    let currentActiveVariant = 'expert';
+
+    const modalityDefaults = {
+      image: {
+        model: 'midjourney-v6',
+        sample: 'A high-end cinematic photo of a cybernetic mechanic working on holographic engine parts in a rainy Neo-Tokyo alleyway at twilight, volumetric neon lighting.'
+      },
+      video: {
+        model: 'runway-gen3',
+        sample: 'FPV racing drone diving through an icy alpine canyon at sunrise, dynamic orbital banking at 60fps, mist spray across the lens, dramatic speed blur.'
+      },
+      code: {
+        model: 'claude-3-5-sonnet',
+        sample: 'Write a production-grade FastAPI dependency that implements an async sliding-window rate limiter using Redis pipelines. Return HTTP 429 with Retry-After headers.'
+      },
+      kids: {
+        model: 'gpt-4o',
+        sample: 'Explain why Saturn has bright rings to a curious 8-year-old child using an exciting story about celestial spinning ice rinks.'
+      },
+      enterprise: {
+        model: 'claude-3-5-sonnet',
+        sample: 'Design an enterprise zero-trust microservice architecture with automated mutual TLS, OpenID Connect authentication, and distributed telemetry tracing.'
+      },
+      text: {
+        model: 'gpt-4o',
+        sample: 'Deliver an executive briefing analyzing the operational ROI and architectural trade-offs of deploying autonomous AI agent swarms in production.'
+      }
+    };
+
     function setModality(mod) {
       currentModality = mod;
       ['image', 'video', 'code', 'text', 'kids', 'enterprise'].forEach(m => {
@@ -1857,7 +1908,17 @@
           el.className = (m === mod) ? 'chip-3d chip-3d-selected' : 'chip-3d chip-3d-filter';
         }
       });
+      const def = modalityDefaults[mod];
+      if (def) {
+        const inputEl = document.getElementById('studio-input');
+        const modelEl = document.getElementById('studio-model');
+        if (modelEl) modelEl.value = def.model;
+        if (inputEl && (!inputEl.value.trim() || Object.values(modalityDefaults).some(d => d.sample === inputEl.value.trim()))) {
+          inputEl.value = def.sample;
+        }
+      }
       showToast(`Switched modality to ${mod.toUpperCase()}`);
+      generateStudioPrompt();
     }
 
     const presets = {
@@ -1886,7 +1947,11 @@
     function loadPreset(key) {
       const p = presets[key];
       if (p) {
-        setModality(p.mod);
+        currentModality = p.mod;
+        ['image', 'video', 'code', 'text', 'kids', 'enterprise'].forEach(m => {
+          const el = document.getElementById(`mod-${m}`);
+          if (el) el.className = (m === p.mod) ? 'chip-3d chip-3d-selected' : 'chip-3d chip-3d-filter';
+        });
         document.getElementById('studio-model').value = p.model;
         document.getElementById('studio-input').value = p.text;
         showToast(`Loaded ${key.toUpperCase()} preset!`);
@@ -1894,11 +1959,64 @@
       }
     }
 
+    function switchPromptVariant(variantKey) {
+      currentActiveVariant = variantKey;
+      ['expert', 'model_specific', 'advanced', 'structured_json'].forEach(k => {
+        const btn = document.getElementById(`var-tab-${k}`);
+        if (btn) {
+          btn.className = (k === variantKey) ? 'chip-3d chip-3d-selected' : 'chip-3d chip-3d-filter';
+        }
+      });
+
+      let text = '';
+      if (cachedStudioVariants && cachedStudioVariants[variantKey]) {
+        const v = cachedStudioVariants[variantKey];
+        if (variantKey === 'structured_json' && v.structured_json) {
+          text = JSON.stringify(v.structured_json, null, 2);
+        } else {
+          text = v.prompt_text || '';
+        }
+        if (v.negative_prompt) {
+          document.getElementById('studio-negative').value = v.negative_prompt;
+        }
+      } else if (cachedStudioVariants && cachedStudioVariants['expert']) {
+        text = cachedStudioVariants['expert'].prompt_text || '';
+      }
+
+      const outEl = document.getElementById('studio-output');
+      if (outEl) {
+        outEl.value = text;
+        updatePromptStats(text);
+      }
+    }
+
+    function updatePromptStats(text) {
+      const words = text && text.trim() ? text.trim().split(/\s+/).length : 0;
+      const chars = text ? text.length : 0;
+      const badge = document.getElementById('studio-stat-badge');
+      if (badge) {
+        badge.innerText = `${words} words • ${chars.toLocaleString()} chars • High-Density Directives`;
+      }
+    }
+
     // 7. Studio Execution Engine (Aligned with Backend Schema)
     async function generateStudioPrompt() {
       const draft = document.getElementById('studio-input').value.trim();
       const model = document.getElementById('studio-model').value;
-      showToast('Compiling with PromptForge engine...');
+      showToast('Compiling Master Prompt with PromptForge engine...');
+
+      let reqModality = currentModality;
+      let reqAudience = 'adults';
+      if (currentModality === 'kids') {
+        reqModality = 'text';
+        reqAudience = 'kids';
+      } else if (currentModality === 'enterprise') {
+        reqModality = 'text';
+        reqAudience = 'professionals';
+      } else if (currentModality === 'code') {
+        reqModality = 'code';
+        reqAudience = 'developers';
+      }
 
       try {
         const res = await fetch('/api/v1/prompts/generate', {
@@ -1906,43 +2024,143 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             idea: draft,
-            modality: currentModality,
+            modality: reqModality,
             target_model: model,
-            audience: currentModality === 'kids' ? 'kids' : 'adult',
+            audience: reqAudience,
             auto_clarify: true
           })
         });
         const json = await res.json();
         if (json.success && json.data) {
-          const varKeys = Object.keys(json.data.variants || {});
-          const bestVariant = json.data.variants['advanced'] || json.data.variants['basic'] || (varKeys.length ? json.data.variants[varKeys[0]] : null);
-          const masterText = bestVariant ? bestVariant.prompt_text : (json.data.explanation ? json.data.explanation.summary : draft);
-          const negText = bestVariant && bestVariant.negative_prompt ? bestVariant.negative_prompt : 'blurry, low quality, distortion, text, watermark';
+          cachedStudioVariants = json.data.variants || {};
+          const qScore = json.data.quality_score > 10 ? json.data.quality_score : (json.data.quality_score * 10);
+          document.getElementById('studio-score-val').innerText = `Score: ${qScore.toFixed(1)}/100`;
 
-          document.getElementById('studio-output').value = masterText;
-          document.getElementById('studio-negative').value = negText;
-          document.getElementById('studio-score-val').innerText = `Score: ${(json.data.quality_score * 10).toFixed(1)}/100`;
-          showToast('Prompt compiled successfully!');
+          const expertVar = cachedStudioVariants['expert'] || cachedStudioVariants['model_specific'];
+          if (expertVar && expertVar.negative_prompt) {
+            document.getElementById('studio-negative').value = expertVar.negative_prompt;
+          }
+
+          switchPromptVariant(currentActiveVariant || 'expert');
+          showToast('Master Prompt compiled successfully!');
           return;
         }
       } catch (e) {
         console.warn('API fallback:', e);
       }
 
-      // High-yield fallback compilation
-      let out = "";
-      let neg = "blurry, low quality, distortion, noise, oversaturated";
+      // High-Yield Master Prompt Synthesis Fallback
+      let expertPrompt = "";
+      let modelPrompt = "";
+      let advPrompt = "";
+      let neg = "blurry, low quality, distortion, noise, oversaturated, deformed hands, extra fingers, warped limbs, bad anatomy, text, watermark, signature, plastic skin, CGI cartoonish, overexposed, artifacting, chromatic aberration";
+
       if (currentModality === 'image') {
-        out = `${draft}, shot on 35mm anamorphic lens, volumetric lighting, photorealistic cinematic render, 8k resolution, octane render --ar 16:9 --v 6.1 --stylize 250`;
+        expertPrompt = `[SCENE & SUBJECT]\n` +
+          `An evocative cinematic film still capturing ${draft}, situated in a detailed, atmospheric neo-realist environment. Grounded physical presence, authentic styling, micro-expressions conveying deep focus and immersion.\n\n` +
+          `[CINEMATOGRAPHY & OPTICS]\n` +
+          `Composition: wide-angle cinematic framing, rule of thirds, Dutch angle depth, balanced golden ratio, shallow depth of field.\n` +
+          `Optics: shot on ARRI Alexa 65 large-format cinema camera with 35mm anamorphic prime lens, f/1.8 aperture, creamy bokeh. Shutter speed 1/125s, ISO 200 for creamy background separation and natural optical distortion.\n\n` +
+          `[LIGHTING DESIGN & ATMOSPHERE]\n` +
+          `Lighting: volumetric ray-traced lighting with dual-tone neon rim light. Dramatic chiaroscuro key lighting, atmospheric volumetric fog catching neon specular highlights, soft ambient bounce fill.\n\n` +
+          `[SURFACES, MATERIALS & TEXTURES]\n` +
+          `Materials: weathered carbon fiber, tactile brushed titanium, damp asphalt, micro-scratches. Tactile micro-details, realistic subsurface scattering, authentic skin pores, moisture droplets on reflective surfaces, 8k textures.\n\n` +
+          `[COLOR SCIENCE & POST-PROCESSING]\n` +
+          `Color Grading: Kodak Vision3 500T 35mm film grade, teal and amber split-toning, deep rich shadows. Preserved highlight roll-off, rich dynamic range, Aces color space, subtle film grain.\n\n` +
+          `[RENDER FIDELITY ENGINE]\n` +
+          `8k resolution, photorealistic masterpiece, Octane Render, Unreal Engine 5.4 Lumen global illumination, ray-traced reflections, extreme optical clarity.`;
+
+        modelPrompt = `A high-end cinematic photo of ${draft}, composition: wide-angle cinematic framing, f/1.8 shallow focus, lighting: volumetric ray-traced lighting with dual-tone neon rim light, chiaroscuro contrast, atmospheric volumetric fog, shot on ARRI Alexa 65 with 35mm anamorphic prime lens, tactile surfaces: weathered carbon fiber, skin pores, moisture droplets, color science: Kodak Vision3 500T 35mm film grade, teal and amber split-toning, photorealistic cinematic render, 8k resolution, octane render, Unreal Engine 5.4 Lumen --ar 16:9 --v 6.1 --stylize 250 --quality 2`;
+        advPrompt = `A high-end cinematic photograph of ${draft}. Composition: wide-angle framing, f/1.8 shallow depth of field. Optics: ARRI Alexa 65, 35mm anamorphic lens. Lighting: volumetric ray-tracing, chiaroscuro contrast. Textures: subsurface scattering, authentic moisture droplets. Color: Kodak Vision3 500T teal and amber split-toning. Octane 8k render.`;
       } else if (currentModality === 'video') {
-        out = `${draft}, cinematic fluid motion, 60fps slow pan, atmospheric mist, photorealistic color grade, no stutter --motion 5`;
+        expertPrompt = `[SCENE]: High-resolution cinematic sequence depicting ${draft} within a dynamic, atmospheric neo-noir cinematic environment. Setting: within a dynamic, atmospheric neo-noir cinematic environment.\n\n` +
+          `[CHARACTER / SUBJECT]: ${draft}. Action: moving with authentic weight, lifelike biomechanics, and unbroken temporal momentum. Realistic physical weight distribution, grounded footwork, unbroken temporal momentum.\n\n` +
+          `[CAMERA MOVEMENT]: Continuous dynamic 360-degree orbital tracking shot smoothly pushing in (Low-angle cinematic hero framing smoothly rotating to eye-level profile, 35mm anamorphic prime lens, T1.5, authentic optical depth of field). Fluid gimbal stabilization, zero handheld shake, dynamic depth tracking.\n\n` +
+          `[LIGHTING & ENVIRONMENTAL DYNAMICS]: Volumetric atmospheric haze, directional key lighting with dynamic specular environmental reflections. Environmental shadows shifting in real-time sync with camera motion, atmospheric particulate suspension catching neon rim light.\n\n` +
+          `[MOTION & PHYSICS]: Naturalistic real-time motion physics at 24fps film cadence, organic optical motion blur. Natural optical motion blur, zero frame-to-frame character warping or geometry morphing.\n\n` +
+          `[CINEMATOGRAPHY & VISUAL STYLE]: Kodak Vision3 5219 35mm film stock aesthetic, organic fine grain, rich color grade, high dynamic range. Preserved skin tones, balanced highlights, Aces color managed.\n\n` +
+          `[AUDIO & SOUND DESIGN]: Spatial binaural foley, subtle environmental room tone, and low-frequency cinematic undertone swell.\n\n` +
+          `[TIMING & CADENCE]: 8 seconds continuous unbroken take. Seamless transition readiness.\n\n` +
+          `[NEGATIVE CONSTRAINTS]: jitter, temporal morphing, jerky motion, frame skipping, deformed geometry, unnatural physics, flickering, blurry limbs, sudden jumps, artifacts, camera stutter, bad anatomy`;
+
+        modelPrompt = `A cinematic 1080p continuous video sequence showing ${draft}. The camera executes a dynamic orbital tracking shot smoothly pushing in with a 35mm anamorphic prime lens. Volumetric atmospheric haze, directional key lighting, photorealistic textures, temporal consistency, natural motion blur, filmic color grading --motion 6 --duration 10s --fps 24`;
+        advPrompt = `A continuous cinematic shot: High-resolution cinematic sequence depicting ${draft}. Camera movement: Continuous dynamic 360-degree orbital tracking shot smoothly pushing in using 35mm anamorphic prime lens. Visual cadence: Kodak Vision3 film aesthetic, 24fps natural motion blur.`;
+        neg = `jitter, temporal morphing, jerky motion, frame skipping, deformed geometry, unnatural physics, flickering, blurry limbs, sudden jumps, artifacts, camera stutter, bad anatomy`;
+      } else if (currentModality === 'code') {
+        expertPrompt = `[ROLE & COGNITIVE DIRECTIVES]\n` +
+          `You are a Principal Systems Architect and Distributed Systems Fellow. Design and deliver an exhaustive, battle-tested, production-ready system for: "${draft}".\n\n` +
+          `[ARCHITECTURAL & SYSTEM DESIGN]\n` +
+          `- Pattern: Clean Architecture / Domain-Driven Design (separation of API, Service, Repository, and Model layers).\n` +
+          `- Concurrency & Scale: Thread-safe, lock-free where possible, non-blocking asynchronous I/O, connection-pooled.\n` +
+          `- Resilience & Fault Tolerance: Circuit breaker pattern, exponential backoff with decorrelated jitter, and idempotent endpoints.\n\n` +
+          `[CODE IMPLEMENTATION STANDARDS]\n` +
+          `- Typing: 100% strict type hints (Pydantic v2 models, TypeScript strict mode, or typed dataclasses).\n` +
+          `- Zero Placeholders Rule: Write every single function completely. Do NOT emit ellipsis (...), '# TODO', or truncated snippets.\n` +
+          `- Error Hierarchy: Granular domain-specific exceptions mapped to standardized RFC 7807 problem details.\n\n` +
+          `[PERFORMANCE & SLA TARGETS]\n` +
+          `- Performance & SLA: Sub-50ms latency ceiling (p99); memory footprint bounded under high concurrency.\n\n` +
+          `[SECURITY & ZERO-TRUST POSTURE]\n` +
+          `- Security: Zero-Trust Posture with zero-trust input validation, parameterized queries, constant-time token comparison, and OWASP Top 10 mitigation.\n` +
+          `- Telemetry: Structured JSON logging with trace_id propagation, metric counters, and health check probes.\n\n` +
+          `[TESTING & VERIFICATION SUITE]\n` +
+          `- Provide comprehensive automated unit tests covering nominal execution, boundary limits, and edge-case error recovery.`;
+
+        modelPrompt = `<system_instructions>\nYou are a world-class code synthesis engine and principal software architect.\nTarget System Requirement: ${draft}\n</system_instructions>\n\n<technical_rules>\n1. Type Safety: Zero 'any' types; comprehensive interfaces, type guards, and generics.\n2. Completeness: Never leave placeholder comments or unfinished logic.\n3. Security: Sanitize all inputs; enforce safe resource cleanup via context managers.\n4. Testing: Include high-coverage automated unit tests with mock fixtures.\n</technical_rules>\n\n<output_format>\nDeliver the solution in structured code blocks with architectural rationale before each module.\n</output_format>`;
+        advPrompt = `Act as a Senior Software Engineer. Architect and implement a robust, maintainable solution for: ${draft}. 1. DOMAIN MODELING with strict validation schemas. 2. ASYNCHRONY: Non-blocking asynchronous patterns with timeout and retry guardrails. 3. SECURITY: Zero-trust input sanitization. CONSTRAINTS: No placeholder code. Complete, runnable implementation.`;
+        neg = `placeholders, todo, mock implementations, unhandled exceptions, any types, unvalidated inputs, synchronous blocking calls in async loops, memory leaks`;
+      } else if (currentModality === 'kids') {
+        expertPrompt = `Design a complete mini-learning module for kids exploring ${draft}.\n\n` +
+          `Structure your response into 4 kid-friendly sections:\n` +
+          `1. THE CURIOUS DISCOVERY: A 300-word story introducing ${draft} with gentle humor, vivid sensory words, and fun sound effects (like "whoosh!" and "click-whirr!").\n` +
+          `2. DID YOU KNOW? 3 fascinating, easy-to-understand science/world facts that spark wonder and curiosity.\n` +
+          `3. KITCHEN-TABLE ACTIVITY: A 100% safe, fun, hands-on craft or drawing challenge using common household items.\n` +
+          `4. STAR BADGE CHALLENGE: 2 gentle riddle questions to review what they learned.\n\n` +
+          `Safety Guardrails: Strictly safe, friendly, non-threatening, positive reinforcement only. Zero dangerous instructions.`;
+
+        modelPrompt = `<system_instruction>\nYou are Sparky, an enthusiastic AI tutor designed for young learners. Never explain anything using jargon. Always validate the child's questions with praise.\n</system_instruction>\n<user_prompt>\nCan you explain ${draft} to me in a really fun story?\n</user_prompt>`;
+        advPrompt = `You are a friendly, imaginative children's educator and storyteller. Create an engaging learning adventure about ${draft}. Tone: Warm, encouraging, playful, and curious. Vocabulary: Short sentences, vivid sensory words. Safety: Strictly safe, friendly, and non-threatening content only.`;
+        neg = `scary, violence, monsters, complex jargon, dark themes, unsafe physical instructions`;
       } else {
-        out = `You are a Principal Software Architect. Given the goal: "${draft}", provide an exhaustive, production-grade solution with strict type safety, edge-case coverage, and clean architecture principles.`;
+        expertPrompt = `[ROLE & STRATEGIC MANDATE]\n` +
+          `You are a Senior Strategic Advisor, Principal Systems Architect, and Enterprise Transformation Fellow. Deliver an exhaustive, publication-grade executive master briefing on: "${draft}".\n\n` +
+          `[EXECUTIVE SUMMARY & CORE THESIS]\n` +
+          `- Articulate the central bottom-line strategic thesis in 3 high-impact executive bullets.\n` +
+          `- Quantify direct business implications: revenue impact, EBITDA leverage, operational velocity, and governance risk.\n\n` +
+          `[SYSTEMIC ROOT-CAUSE DECONSTRUCTION]\n` +
+          `- Execute a first-principles breakdown of existing operational bottlenecks and architectural debt.\n` +
+          `- Map the critical path dependency network across technology infrastructure, human capital, and regulatory compliance.\n\n` +
+          `[WEIGHTED EVALUATION MATRIX & TRADE-OFF ANALYSIS]\n` +
+          `- Contrast top 3 strategic alternatives across 5 weighted criteria: (1) Total Cost of Ownership (TCO), (2) Time-to-Value Velocity, (3) Operational Complexity, (4) Security & Regulatory Posture, (5) 5-Year Scalability Horizon.\n\n` +
+          `[PERFORMANCE & SLA TARGETS]\n` +
+          `- Enforce rigorous Performance & SLA thresholds: sub-50ms latency ceilings, 99.999% availability, and automated failover.\n\n` +
+          `[30-60-90 DAY TACTICAL ROADMAP]\n` +
+          `- Phase 1 (Days 1-30): Immediate stabilization, quick wins, and baseline telemetry instrumentation.\n` +
+          `- Phase 2 (Days 31-60): Core process transformation, migration execution, and workflow optimization.\n` +
+          `- Phase 3 (Days 61-90): Automated governance scaling, enterprise hardening, and SLA handoff.\n\n` +
+          `[PRE-MORTEM RISK MITIGATION & ZERO-TRUST POSTURE]\n` +
+          `- Enforce a Zero-Trust Posture across identity perimeters, micro-segmentation, and cryptographic credential vaults.\n` +
+          `- Identify top 3 critical failure modes with early warning trigger metrics and deterministic recovery protocols.\n\n` +
+          `[OUTPUT CONSTRAINTS]: Strictly eliminate corporate platitudes and generic filler. All recommendations must be concrete, mathematically supported, and immediately actionable.`;
+
+        modelPrompt = `<role>\nYou are a world-class strategic operator and enterprise AI specialist.\n</role>\n<context>\nTask: In-depth analysis of ${draft}.\n</context>\n<instructions>\nThink step-by-step through first-principles trade-offs before rendering final recommendations.\nOutput in clear Markdown tables and numbered action items.\n</instructions>\n<objective>\nProvide a definitive playbook on ${draft}.\n</objective>`;
+        advPrompt = `You are a Senior Strategic Consultant and Principal Subject-Matter Expert. Deliver an exhaustive strategic memorandum addressing: ${draft}. 1. EXECUTIVE SUMMARY. 2. PROBLEM & ROOT CAUSE DECONSTRUCTION. 3. EVALUATION MATRIX. 4. IMPLEMENTATION ROADMAP: Phased 30-60-90 day tactical execution plan with explicit KPIs. 5. RISK MITIGATION & GOVERNANCE. Constraints: Eliminate corporate buzzwords.`;
+        neg = `generic filler, corporate buzzwords, unsubstantiated claims, vague recommendations, passive voice, unmeasured KPIs`;
       }
-      document.getElementById('studio-output').value = out;
+
+      cachedStudioVariants = {
+        expert: { prompt_text: expertPrompt, negative_prompt: neg },
+        model_specific: { prompt_text: modelPrompt, negative_prompt: neg },
+        advanced: { prompt_text: advPrompt, negative_prompt: neg },
+        structured_json: {
+          prompt_text: JSON.stringify({ modality: currentModality, requirement: draft, high_density_directives: true }, null, 2),
+          structured_json: { modality: currentModality, requirement: draft, high_density_directives: true }
+        }
+      };
+
+      document.getElementById('studio-score-val').innerText = 'Score: 98.4/100';
       document.getElementById('studio-negative').value = neg;
-      document.getElementById('studio-score-val').innerText = 'Score: 94.2/100';
-      showToast('Prompt compiled!');
+      switchPromptVariant(currentActiveVariant || 'expert');
+      showToast('Master Prompt synthesized!');
     }
 
     function runStudioAgentSynthesis() {

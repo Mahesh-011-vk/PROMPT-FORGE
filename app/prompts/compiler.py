@@ -7,6 +7,7 @@ generates explanatory rationale, computes heuristic quality scores, and suggests
 
 from app.config.constants import AudienceCategory, Modality, SafetyClassification
 from app.prompts.adult_builder import adult_prompt_builder
+from app.prompts.code_builder import code_prompt_builder
 from app.prompts.image_builder import image_prompt_builder
 from app.prompts.kids_builder import kids_prompt_builder
 from app.prompts.video_builder import video_prompt_builder
@@ -76,6 +77,18 @@ class PromptCompiler:
             customization = ["Camera movement type (push-in vs drone orbit)", "Duration (5s vs 10s)", "Motion bucket intensity"]
             expected = "Continuous video shot with consistent subject identity, smooth camera tracking, and natural physics."
             weaknesses = ["Complex simultaneous actions can sometimes cause temporary visual artifacting across longer durations."]
+
+        elif intent.modality == Modality.CODE:
+            variants = code_prompt_builder.generate_variants(intent, auto_filled)
+            why_added = [
+                "Decomposed requirement into Clean Architecture layers (Domain, Service, Repository, API).",
+                "Mandated 100% strict type hints, validation models, and zero-placeholder complete code.",
+                "Enforced non-blocking asynchronous patterns, connection pooling, and circuit breaker resilience.",
+                "Embedded OWASP Top 10 security guardrails and automated unit test suite specifications.",
+            ]
+            customization = ["Target language/version (Python 3.12+ vs TypeScript 5.0+)", "Architecture pattern (DDD vs Hexagonal)", "Throughput & p99 latency SLA"]
+            expected = "Production-ready, battle-tested, syntax-checked code implementation ready for enterprise deployment."
+            weaknesses = ["May require domain-specific schema definitions if building bespoke legacy integrations."]
 
         elif intent.audience == AudienceCategory.KIDS:
             variants = kids_prompt_builder.generate_variants(intent, auto_filled)

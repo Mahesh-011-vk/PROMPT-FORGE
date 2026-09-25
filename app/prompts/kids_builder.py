@@ -72,6 +72,7 @@ class KidsPromptBuilder:
             variant_type="expert",
             title="Complete STEM Curriculum & Craft Prompt",
             prompt_text=expert_text,
+            negative_prompt="scary, violence, monsters, complex jargon, dark themes, unsafe physical instructions",
             recommended_settings={"temperature": 0.5, "max_tokens": 1500},
         )
 
