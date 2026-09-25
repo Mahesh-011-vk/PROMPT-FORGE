@@ -764,11 +764,6 @@
         <span>API Docs</span>
       </a>
 
-      <!-- Quick 3D Styleguide Launcher -->
-      <button class="btn-3d-primary" onclick="switchTab('styleguide')">
-        <i class="fa-solid fa-swatchbook"></i>
-        <span>3D Styleguide</span>
-      </button>
     </div>
   </header>
 
@@ -800,9 +795,6 @@
       </button>
       <button class="tab-btn-3d" onclick="switchTab('security')">
         <i class="fa-solid fa-shield-halved"></i> <span>Security</span>
-      </button>
-      <button class="tab-btn-3d" onclick="switchTab('styleguide')" style="border-left: 2px solid var(--border-clay); margin-left: 4px;">
-        <i class="fa-solid fa-palette"></i> <span>🎨 Product Styleguide</span>
       </button>
     </div>
   </div>
@@ -1213,231 +1205,6 @@
       </div>
     </div>
 
-    <!-- TAB 9: 🎨 PRODUCT UI STYLEGUIDE (DIRECT 1:1 REPLICATION OF USER IMAGE) -->
-    <div id="tab-styleguide" class="tab-content">
-      <div class="clay-card-l4" style="padding: 32px; background: var(--bg-surface); position: relative;">
-        <!-- Header from styleguide image -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; border-bottom: 2px solid var(--border-clay); padding-bottom: 16px;">
-          <div>
-            <h1 class="font-3d-display" style="font-size: 2.4rem; line-height: 1;">Product UI Styleguide</h1>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 6px;">
-              Tactile Neumorphic & Soft 3D Claymorphic Design System tokens, components, elevation, and 3D typography.
-            </p>
-          </div>
-          <div class="chip-3d chip-3d-selected" style="padding: 8px 18px; font-size: 0.85rem;">
-            <i class="fa-solid fa-check-double"></i> <span>Active Design System</span>
-          </div>
-        </div>
-
-        <div class="grid-2" style="gap: 36px;">
-          
-          <!-- LEFT COLUMN: Color Tokens, Spacing, Buttons, Inputs, Tabs, Alerts -->
-          <div style="display: flex; flex-direction: column; gap: 28px;">
-            
-            <!-- 1. Color Tokens -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Color Tokens</div>
-              <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-                <!-- Primary Token -->
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;" onclick="copyToken('#9EBCEEC', 'Primary')">
-                  <div style="width: 72px; height: 72px; border-radius: 20px; background: #9ee0c8; box-shadow: var(--shadow-l2); border: 2px solid rgba(255,255,255,0.8);"></div>
-                  <strong style="font-size: 0.8rem;">Primary</strong>
-                  <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">#9EBCEEC</span>
-                </div>
-
-                <!-- Surface Token -->
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;" onclick="copyToken('#FFFFFF', 'Surface')">
-                  <div style="width: 72px; height: 72px; border-radius: 20px; background: #ffffff; box-shadow: var(--shadow-l2); border: 1px solid var(--border-clay);"></div>
-                  <strong style="font-size: 0.8rem;">Surface</strong>
-                  <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">#FFFFFF</span>
-                </div>
-
-                <!-- Border Token -->
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;" onclick="copyToken('#E2E5EC', 'Border')">
-                  <div style="width: 72px; height: 72px; border-radius: 20px; background: #e2e8f0; box-shadow: var(--shadow-l2); border: 1px solid #cbd5e1;"></div>
-                  <strong style="font-size: 0.8rem;">Border</strong>
-                  <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">#E2E5EC</span>
-                </div>
-
-                <!-- Focus Ring Token -->
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;" onclick="copyToken('#00CFCC', 'Focus Ring')">
-                  <div style="width: 72px; height: 72px; border-radius: 50%; background: #ffffff; border: 6px solid #00cfcc; box-shadow: 0 0 16px rgba(0, 207, 204, 0.6); display: flex; align-items: center; justify-content: center;">
-                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #00cfcc; opacity: 0.15;"></div>
-                  </div>
-                  <strong style="font-size: 0.8rem;">Focus ring</strong>
-                  <span style="font-size: 0.7rem; color: #00cfcc; font-family: var(--font-mono); font-weight: 700;">#00CFCC</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 2. Spacing & Radius Specs -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Spacing & Radius</div>
-              <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-                <div style="width: 68px; height: 68px; background: #e6ebf3; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted); box-shadow: var(--shadow-l1);">70px</div>
-                <div style="width: 48px; height: 68px; background: #e6ebf3; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted); box-shadow: var(--shadow-l1);">25px</div>
-                <div style="width: 28px; height: 68px; background: #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted);">10px</div>
-                <div style="width: 68px; height: 68px; background: #ffffff; border-radius: 20px; border: 1px solid var(--border-clay); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--text-main); box-shadow: var(--shadow-l2);">Radius 20px</div>
-              </div>
-            </div>
-
-            <!-- 3. Tactile Pill Buttons -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Buttons</div>
-              <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-                <div>
-                  <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">Default</div>
-                  <button class="btn-3d-primary">Primary Action</button>
-                </div>
-                <div>
-                  <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">Hover (Focus Ring)</div>
-                  <button class="btn-3d-primary" style="box-shadow: 0 0 0 4px rgba(0, 207, 204, 0.4), 0 8px 24px rgba(0, 207, 204, 0.4); transform: translateY(-2px);">Primary Action</button>
-                </div>
-                <div>
-                  <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">Disabled</div>
-                  <button class="btn-3d-disabled">Disabled</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4. Inputs -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Inputs (Debossed Cavity)</div>
-              <div class="input-3d-pill-wrap" style="max-width: 380px;">
-                <input type="text" class="input-3d-pill" value="Search invoices..." placeholder="Search prompt repository...">
-                <i class="fa-solid fa-magnifying-glass input-3d-icon"></i>
-              </div>
-            </div>
-
-            <!-- 5. Pill Tabs -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Tabs (Segmented Pill)</div>
-              <div class="tab-bar-3d" style="max-width: 360px;">
-                <button class="tab-btn-3d active">Overview</button>
-                <button class="tab-btn-3d">Billing</button>
-                <button class="tab-btn-3d">Team</button>
-              </div>
-            </div>
-
-            <!-- 6. Pill Alerts -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Alerts (Status Banners)</div>
-              <div style="display: flex; flex-direction: column; gap: 8px; max-width: 420px;">
-                <div class="alert-3d alert-3d-success">
-                  <i class="fa-regular fa-circle-check" style="font-size: 1rem;"></i>
-                  <span>Success • High-quality prompt compiled with 0 issues</span>
-                </div>
-                <div class="alert-3d alert-3d-warning">
-                  <i class="fa-solid fa-triangle-exclamation" style="font-size: 1rem;"></i>
-                  <span>Warning • Potential ambiguity detected in camera parameters</span>
-                </div>
-                <div class="alert-3d alert-3d-error">
-                  <i class="fa-regular fa-circle-xmark" style="font-size: 1rem;"></i>
-                  <span>Error • Request payload breached safety rule heuristic</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- RIGHT COLUMN: Typography Scale, Elevation Tiers, Chips, Stacked Cards -->
-          <div style="display: flex; flex-direction: column; gap: 28px;">
-            
-            <!-- 1. Typography Scale with 3D Look -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Typography Scale (3D Font Look)</div>
-              <div style="background: var(--bg-inset); padding: 20px; border-radius: 18px; box-shadow: var(--shadow-inset-box); display: flex; flex-direction: column; gap: 12px;">
-                
-                <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border-clay); padding-bottom: 8px;">
-                  <span class="font-3d-display" style="font-size: 2.2rem;">Display</span>
-                  <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">Size 80 / 7px</span>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border-clay); padding-bottom: 8px;">
-                  <span class="font-3d-title" style="font-size: 1.6rem;">Hister</span>
-                  <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">Size 50 / 6px</span>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border-clay); padding-bottom: 8px;">
-                  <span class="font-3d-mint" style="font-size: 1.3rem;">Pastin</span>
-                  <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">Size 40 / 7px</span>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border-clay); padding-bottom: 8px;">
-                  <span class="font-3d-emboss" style="font-size: 1.05rem;">Medium</span>
-                  <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">Size 30 / 7px</span>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                  <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Caption</span>
-                  <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">Size 12 / 0px</span>
-                </div>
-
-              </div>
-            </div>
-
-            <!-- 2. Elevation Tiers (Level 1 to Level 5) -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Elevation Tiers (Tactile Shadows)</div>
-              <div style="display: flex; flex-direction: column; gap: 10px; max-width: 320px;">
-                <div class="clay-card-l1" style="padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
-                  <strong style="font-size: 0.85rem;">Level 1</strong>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">Floating 4px</span>
-                </div>
-                <div class="clay-card-l2" style="padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
-                  <strong style="font-size: 0.85rem;">Level 2</strong>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">Smooth 8px</span>
-                </div>
-                <div class="clay-card-l3" style="padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
-                  <strong style="font-size: 0.85rem;">Level 3</strong>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">Tactile 14px</span>
-                </div>
-                <div class="clay-card-l4" style="padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
-                  <strong style="font-size: 0.85rem;">Level 4</strong>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">Elevated 20px</span>
-                </div>
-                <div class="clay-card-l5" style="padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
-                  <strong style="font-size: 0.85rem;">Level 5 (Stacked)</strong>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">Deep Clay Block</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3. Chips -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Chips</div>
-              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <span class="chip-3d chip-3d-filter"><i class="fa-solid fa-sliders"></i> Filter</span>
-                <span class="chip-3d chip-3d-selected"><i class="fa-solid fa-check"></i> Selected</span>
-                <span class="chip-3d chip-3d-disabled">Disabled</span>
-              </div>
-            </div>
-
-            <!-- 4. Stacked Clay Card (Image card replica from styleguide) -->
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px;">Cards (Tactile Stacked Component)</div>
-              <div class="clay-card-l5" style="padding: 22px; max-width: 380px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px;">
-                  <div>
-                    <h3 class="font-3d-title" style="font-size: 1.15rem; margin-bottom: 6px;">Title</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px;">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor.
-                    </p>
-                    <button class="btn-3d-secondary" style="font-size: 0.75rem; padding: 6px 14px;">Image</button>
-                  </div>
-                  <div style="width: 72px; height: 64px; border-radius: 14px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.5rem; box-shadow: var(--shadow-l1); flex-shrink: 0;">
-                    <i class="fa-regular fa-image"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
-    </div>
-
   </main>
 
   <!-- ========================================================================
@@ -1509,8 +1276,7 @@
       // Highlight corresponding tab button
       const btns = document.querySelectorAll('.tab-btn-3d');
       btns.forEach(b => {
-        if (b.innerText.toLowerCase().includes(tabId.toLowerCase()) || 
-            (tabId === 'styleguide' && b.innerText.includes('Styleguide'))) {
+        if (b.innerText.toLowerCase().includes(tabId.toLowerCase())) {
           b.classList.add('active');
         }
       });
