@@ -101,10 +101,10 @@ promptforge demo
 ```bash
 promptforge serve --port 8000
 ```
-- **Web UI Studio:** [http://localhost:8000/ui](http://localhost:8000/ui)
-- **Interactive Swagger Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc API Reference:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
-- **Health Probes:** [http://localhost:8000/health](http://localhost:8000/health)
+- **Web UI Studio
+- **Interactive Swagger Docs
+- **ReDoc API Reference
+- **Health Probes
 
 ---
 
