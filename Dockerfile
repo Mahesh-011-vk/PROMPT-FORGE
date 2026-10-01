@@ -28,9 +28,9 @@ COPY pyproject.toml /build/
 COPY app /build/app
 COPY promptforge /build/promptforge
 
-# Install dependencies including full feature set
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install -e ".[full]"
+# Install dependencies including full feature set (non-editable for Docker portability)
+RUN pip install --upgrade pip setuptools wheel hatchling && \
+    pip install ".[full]"
 
 # ==============================================================================
 # Stage 2: Production Distroless / Hardened Runtime Stage
@@ -66,9 +66,8 @@ COPY --chown=promptforge:promptforge datasets /app/datasets
 COPY --chown=promptforge:promptforge pyproject.toml /app/pyproject.toml
 COPY --chown=promptforge:promptforge docker-entrypoint.sh /app/docker-entrypoint.sh
 
-# Install local package metadata
-RUN pip install --no-deps -e . && \
-    chmod +x /app/docker-entrypoint.sh && \
+# Install entrypoint script permissions
+RUN chmod +x /app/docker-entrypoint.sh && \
     mkdir -p /app/data && \
     chown -R promptforge:promptforge /app
 
