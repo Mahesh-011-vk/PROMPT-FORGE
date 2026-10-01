@@ -1,26 +1,22 @@
 services:
   - type: web
     name: promptforge-ai
-    runtime: python
+    env: docker
     plan: free
-    buildCommand: pip install --upgrade pip && pip install -e ".[full]"
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers
     healthCheckPath: /health
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.8
       - key: ENVIRONMENT
         value: production
       - key: DEBUG
-        value: false
+        value: "false"
       - key: DEMO_MODE
-        value: true
+        value: "true"
       - key: DEFAULT_PROVIDER
         value: mock
       - key: SECRET_KEY
         generateValue: true
       - key: USE_IN_MEMORY_CACHE
-        value: true
+        value: "true"
       - key: VECTOR_DB_TYPE
         value: memory
       - key: DATABASE_URL

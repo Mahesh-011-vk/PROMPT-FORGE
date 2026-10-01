@@ -23,12 +23,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /build/venv
 ENV PATH="/build/venv/bin:$PATH"
 
-# Copy package specifications
+# Copy package specifications and source code (required by hatchling build backend)
 COPY pyproject.toml /build/
+COPY app /build/app
+COPY promptforge /build/promptforge
 
 # Install dependencies including full feature set
 RUN pip install --upgrade pip setuptools wheel && \
-    pip install .
+    pip install -e ".[full]"
 
 # ==============================================================================
 # Stage 2: Production Distroless / Hardened Runtime Stage
