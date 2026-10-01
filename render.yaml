@@ -3,14 +3,33 @@ services:
     name: promptforge-ai
     runtime: python
     plan: free
-    buildCommand: pip install --upgrade pip && pip install -e .
+    buildCommand: pip install --upgrade pip && pip install -e ".[full]"
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
       - key: ENVIRONMENT
         value: production
+      - key: DEBUG
+        value: false
+      - key: DEMO_MODE
+        value: true
+      - key: DEFAULT_PROVIDER
+        value: mock
       - key: SECRET_KEY
         generateValue: true
+      - key: USE_IN_MEMORY_CACHE
+        value: true
+      - key: VECTOR_DB_TYPE
+        value: memory
       - key: DATABASE_URL
-        value: sqlite+aiosqlite:///promptforge.db
+        fromDatabase:
+          name: promptforge-db
+          property: connectionString
+
+databases:
+  - name: promptforge-db
+    plan: free
+    databaseName: promptforge_db
+    user: promptforge
