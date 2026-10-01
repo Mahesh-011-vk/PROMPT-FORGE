@@ -75,6 +75,23 @@ class Settings(BaseSettings):
     ENABLE_EVALUATION: bool = True
     ENABLE_PROMPT_INJECTION_DEFENSE: bool = True
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def fix_database_url(cls, v: str) -> str:
+        """Auto-convert bare postgresql:// URLs to use asyncpg driver.
+
+        Render (and most cloud providers) supply a standard postgresql:// connection
+        string which maps to the sync psycopg2 driver. SQLAlchemy's async engine
+        requires an async driver — rewrite the scheme here so the app works
+        without manual environment variable changes.
+        """
+        if isinstance(v, str):
+            if v.startswith("postgres://"):
+                v = v.replace("postgres://", "postgresql+asyncpg://", 1)
+            elif v.startswith("postgresql://"):
+                v = v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return v
+
     @field_validator("LOG_LEVEL")
     @classmethod
     def validate_log_level(cls, v: str) -> str:
