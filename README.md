@@ -18,7 +18,7 @@
 **PromptForge AI** is a production-grade enterprise platform designed to elevate prompt engineering from subjective guesswork into a deterministic, scientifically evaluated, and version-controlled software discipline.
 
 Unlike basic chat wrappers, PromptForge AI provides a full-stack, hexagonal-architecture platform integrating:
-- **Multimodal Prompt Synthesis**: Tailored compilers for Text, Image (Midjourney v6, SDXL, FLUX), Video (Runway Gen-3, Luma Dream Machine, Sora, Kling), Audio, and Code.
+- **Multimodal Prompt Synthesis**: Tailored compilers for Text, Image (Midjourney v6, SDXL, FLUX), Video (Runway Gen-3, Luma Dream Machine, Sora, Kling), Audio, and Code
 - **Autonomous Multi-Agent Orchestrator**: A 6-agent collaborative DAG (`Planner` ➔ `Intent` ➔ `Knowledge` ➔ `Builder` ➔ `Critic` ➔ `Safety`) that iteratively refines prompts with thought traces.
 - **Diagnostic Optimizer & Repair Engine**: Detects missing dimensions, calculates quantitative score boosts, and rewrites broken or ambiguous prompts with before/after diffs.
 - **7-Dimensional Heuristic Evaluation Lab**: Audits Clarity, Specificity, Context, Constraints, Output Format, Safety, and Ambiguity Control with LLM-as-a-judge and A/B benchmarking.
