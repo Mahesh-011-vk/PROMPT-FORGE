@@ -25,7 +25,7 @@ Unlike basic chat wrappers, PromptForge AI provides a full-stack, hexagonal-arch
 - **RAG Knowledge Base & Deduplication**: Markdown knowledge ingestion, dense semantic vector retrieval, cosine similarity indexing, and exact SHA-256 fingerprint deduplication.
 - **Git-like Prompt Version Control**: Semantic versioning (`major.minor.patch`), visual diff calculation, commit messages, rollback, and branching.
 - **Enterprise Security & Guardrails**: PII scrubbers (SSN, credit cards, emails, phones, IPs), injection defense, cryptographic nonce sandwich wrappers, and token-bucket rate limiters.
-- **Data Engineering & Analytics**: Pandas-powered latency percentile computation (p50, p95, p99), token cost forecasting, and live Plotly visualization dashboards
+- **Data Engineering & Analytics**: Pandas-powered latency percentile computation (p50, p95, p99), token cost forecasting, and live Plotly visualization dashboards.
 - **Python-First UI (NiceGUI)**: Sleek, dark-mode glassmorphic studio directly mounted on FastAPI at `/ui`.
 
 ---
