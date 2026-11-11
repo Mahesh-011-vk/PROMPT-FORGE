@@ -20,7 +20,7 @@
 Unlike basic chat wrappers, PromptForge AI provides a full-stack, hexagonal-architecture platform integrating:
 - **Multimodal Prompt Synthesis**: Tailored compilers for Text, Image (Midjourney v6, SDXL, FLUX), Video (Runway Gen-3, Luma Dream Machine, Sora, Kling), Audio, and Code
 - **Autonomous Multi-Agent Orchestrator**: A 6-agent collaborative DAG (`Planner` ➔ `Intent` ➔ `Knowledge` ➔ `Builder` ➔ `Critic` ➔ `Safety`) that iteratively refines prompts with thought traces.
-- **Diagnostic Optimizer & Repair Engine**: Detects missing dimensions, calculates quantitative score boosts, and rewrites broken or ambiguous prompts with before/after diffs.
+- **Diagnostic Optimizer & Repair Engine**: Detects missing dimensions, calculates quantitative score boosts, and rewrites broken or ambiguous prompts with before/after diffs
 - **7-Dimensional Heuristic Evaluation Lab**: Audits Clarity, Specificity, Context, Constraints, Output Format, Safety, and Ambiguity Control with LLM-as-a-judge and A/B benchmarking.
 - **RAG Knowledge Base & Deduplication**: Markdown knowledge ingestion, dense semantic vector retrieval, cosine similarity indexing, and exact SHA-256 fingerprint deduplication.
 - **Git-like Prompt Version Control**: Semantic versioning (`major.minor.patch`), visual diff calculation, commit messages, rollback, and branching.
